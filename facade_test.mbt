@@ -21,7 +21,7 @@ test "facade: Repr constructors pretty-print as expected" {
   )
   inspect(
     pretty_print_repr_with(opts, ctor("Ok", [string("yes")])),
-    content="Ok \"yes\"",
+    content="Ok(\"yes\")",
   )
   inspect(
     pretty_print_repr_with(opts, opaque_("function")),

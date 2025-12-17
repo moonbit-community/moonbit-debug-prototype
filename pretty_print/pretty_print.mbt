@@ -312,18 +312,16 @@ fn pretty_print_repr_go(
     @repr.Repr::BoolLit(x) => leaf(x)
     @repr.Repr::CharLit(x) => leaf(x)
     @repr.Repr::StringLit(x) => no_parens(verbatim(quote_string_literal(x)))
-    @repr.Repr::Ctor(name, _) => {
-      let rendered_children = children.map(wrap).map(fn(c) { indent("  ", c) })
-      let content = verbatim(name) +
-        rendered_children.fold(init={ size: 0, lines: [] }, fn(acc, c) {
-          acc + c
-        })
-      if children.length() > 0 {
-        parens(content)
-      } else {
-        no_parens(content)
+    @repr.Repr::Ctor(name, _) =>
+      match children {
+        [] => no_parens(verbatim(name))
+        _ =>
+          if name == "Tuple" {
+            comma_seq("(", ")", children.map(no_wrap))
+          } else {
+            comma_seq(name + "(", ")", children.map(no_wrap))
+          }
       }
-    }
     @repr.Repr::Array(_) => comma_seq("[ ", " ]", children.map(no_wrap))
     @repr.Repr::Record(_) => comma_seq("{ ", " }", children.map(no_wrap))
     @repr.Repr::Opaque(name, _) =>

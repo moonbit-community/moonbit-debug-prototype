@@ -12,7 +12,7 @@ test "docs: building Repr manually" {
   ])
   inspect(
     pretty_print_repr_with(print_opts(), r),
-    content="{ answer: 42, xs: [ 1, 2, 3 ], tag: Ok \"done\" }",
+    content="{ answer: 42, xs: [ 1, 2, 3 ], tag: Ok(\"done\") }",
   )
 }
 

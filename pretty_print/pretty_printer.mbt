@@ -82,16 +82,6 @@ fn surround(
 }
 
 ///|
-/// Wrap in parentheses when `needs_parens` is true.
-fn wrap(c : Content) -> ContentParens {
-  if c.needs_parens {
-    { size: c.size, lines: surround_lines("(", ")", c.lines) }
-  } else {
-    { size: c.size, lines: c.lines }
-  }
-}
-
-///|
 /// Convert `Content` to `ContentParens` without adding parentheses.
 fn no_wrap(c : Content) -> ContentParens {
   { size: c.size, lines: c.lines }

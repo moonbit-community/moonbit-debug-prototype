@@ -38,7 +38,7 @@ test "prune: does not count Prop as depth" {
     compact_threshold: 100,
     use_ansi: false,
   }
-  inspect(pretty_print_repr_with(opts, r), content="{ x: A (...) }")
+  inspect(pretty_print_repr_with(opts, r), content="{ x: A(...) }")
 }
 
 ///|
