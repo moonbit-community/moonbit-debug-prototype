@@ -31,7 +31,7 @@ pub fn string(String) -> Repr
 // Errors
 
 // Types and methods
-pub(all) enum DebugInfo {
+pub enum DebugInfo {
   IntLit(Int)
   DoubleLit(Double)
   BoolLit(Bool)
@@ -47,6 +47,23 @@ pub(all) enum DebugInfo {
   AssocProp(DebugInfo, DebugInfo)
   Omitted
 }
+pub fn DebugInfo::array(Array[Self]) -> Self
+pub fn DebugInfo::assoc(String, Array[Self]) -> Self
+pub fn DebugInfo::assoc_prop(Self, Self) -> Self
+pub fn DebugInfo::bool_lit(Bool) -> Self
+pub fn DebugInfo::char_lit(Char) -> Self
+pub fn DebugInfo::children(Self) -> Array[Self]
+pub fn DebugInfo::ctor(String, Array[Self]) -> Self
+pub fn DebugInfo::double_lit(Double) -> Self
+pub fn DebugInfo::int_lit(Int) -> Self
+pub fn DebugInfo::literal(String) -> Self
+pub fn DebugInfo::omitted() -> Self
+pub fn DebugInfo::opaque_node(String, Array[Self]) -> Self
+pub fn DebugInfo::prop(String, Self) -> Self
+pub fn DebugInfo::record(Array[Self]) -> Self
+pub fn DebugInfo::shallow(Self) -> Self
+pub fn DebugInfo::string_lit(String) -> Self
+pub fn DebugInfo::with_children(Self, Array[Self]) -> Self
 pub impl Compare for DebugInfo
 pub impl Eq for DebugInfo
 

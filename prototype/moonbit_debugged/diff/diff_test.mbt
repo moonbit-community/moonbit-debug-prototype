@@ -48,3 +48,21 @@ test "diff: tolerant doubles compare same" {
     _ => fail("expected Same(DoubleLit, [])")
   }
 }
+
+///|
+test "DebugInfo is readonly but constructible via smart ctors" {
+  let info = @repr.DebugInfo::ctor("X", [@repr.DebugInfo::int_lit(1)])
+  match info {
+    @repr.DebugInfo::Ctor("X", [@repr.DebugInfo::IntLit(1)]) => ()
+    _ => fail("expected Ctor(\"X\", [IntLit(1)])")
+  }
+  assert_eq(@repr.DebugInfo::children(info).length(), 1)
+  match @repr.DebugInfo::shallow(info) {
+    @repr.DebugInfo::Ctor("X", []) => ()
+    _ => fail("expected shallow Ctor(\"X\", [])")
+  }
+  match @repr.DebugInfo::omitted() {
+    @repr.DebugInfo::Omitted => ()
+    _ => fail("expected Omitted")
+  }
+}

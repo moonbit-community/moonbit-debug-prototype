@@ -26,22 +26,7 @@ fn info_adds_depth(info : @repr.DebugInfo) -> Bool {
 ///|
 /// Child nodes of a `DebugInfo` node.
 fn info_children(info : @repr.DebugInfo) -> Array[@repr.DebugInfo] {
-  match info {
-    @repr.DebugInfo::IntLit(_)
-    | @repr.DebugInfo::DoubleLit(_)
-    | @repr.DebugInfo::BoolLit(_)
-    | @repr.DebugInfo::CharLit(_)
-    | @repr.DebugInfo::StringLit(_)
-    | @repr.DebugInfo::Literal(_)
-    | @repr.DebugInfo::Omitted => []
-    @repr.DebugInfo::Array(xs)
-    | @repr.DebugInfo::Record(xs)
-    | @repr.DebugInfo::Ctor(_, xs)
-    | @repr.DebugInfo::Opaque(_, xs)
-    | @repr.DebugInfo::Assoc(_, xs) => xs
-    @repr.DebugInfo::Prop(_, value) => [value]
-    @repr.DebugInfo::AssocProp(key, value) => [key, value]
-  }
+  @repr.DebugInfo::children(info)
 }
 
 ///|
@@ -50,60 +35,13 @@ fn info_with_children(
   info : @repr.DebugInfo,
   children : Array[@repr.DebugInfo],
 ) -> @repr.DebugInfo {
-  match info {
-    @repr.DebugInfo::IntLit(_)
-    | @repr.DebugInfo::DoubleLit(_)
-    | @repr.DebugInfo::BoolLit(_)
-    | @repr.DebugInfo::CharLit(_)
-    | @repr.DebugInfo::StringLit(_)
-    | @repr.DebugInfo::Literal(_)
-    | @repr.DebugInfo::Omitted => info
-    @repr.DebugInfo::Array(_) => @repr.DebugInfo::Array(children)
-    @repr.DebugInfo::Record(_) => @repr.DebugInfo::Record(children)
-    @repr.DebugInfo::Ctor(name, _) => @repr.DebugInfo::Ctor(name, children)
-    @repr.DebugInfo::Opaque(name, _) => @repr.DebugInfo::Opaque(name, children)
-    @repr.DebugInfo::Assoc(name, _) => @repr.DebugInfo::Assoc(name, children)
-    @repr.DebugInfo::Prop(name, _) =>
-      match children {
-        [value] => @repr.DebugInfo::Prop(name, value)
-        _ => @repr.DebugInfo::Prop(name, @repr.DebugInfo::Omitted)
-      }
-    @repr.DebugInfo::AssocProp(_, _) =>
-      match children {
-        [key, value] => @repr.DebugInfo::AssocProp(key, value)
-        _ =>
-          @repr.DebugInfo::AssocProp(
-            @repr.DebugInfo::Omitted,
-            @repr.DebugInfo::Omitted,
-          )
-      }
-  }
+  @repr.DebugInfo::with_children(info, children)
 }
 
 ///|
 /// A shallow copy of `info` containing only its “label” (children replaced).
 fn info_shallow(info : @repr.DebugInfo) -> @repr.DebugInfo {
-  match info {
-    @repr.DebugInfo::IntLit(_)
-    | @repr.DebugInfo::DoubleLit(_)
-    | @repr.DebugInfo::BoolLit(_)
-    | @repr.DebugInfo::CharLit(_)
-    | @repr.DebugInfo::StringLit(_)
-    | @repr.DebugInfo::Literal(_)
-    | @repr.DebugInfo::Omitted => info
-    @repr.DebugInfo::Array(_) => @repr.DebugInfo::Array([])
-    @repr.DebugInfo::Record(_) => @repr.DebugInfo::Record([])
-    @repr.DebugInfo::Ctor(name, _) => @repr.DebugInfo::Ctor(name, [])
-    @repr.DebugInfo::Opaque(name, _) => @repr.DebugInfo::Opaque(name, [])
-    @repr.DebugInfo::Assoc(name, _) => @repr.DebugInfo::Assoc(name, [])
-    @repr.DebugInfo::Prop(name, _) =>
-      @repr.DebugInfo::Prop(name, @repr.DebugInfo::Omitted)
-    @repr.DebugInfo::AssocProp(_, _) =>
-      @repr.DebugInfo::AssocProp(
-        @repr.DebugInfo::Omitted,
-        @repr.DebugInfo::Omitted,
-      )
-  }
+  @repr.DebugInfo::shallow(info)
 }
 
 ///|
@@ -155,7 +93,7 @@ fn prune_repr_info(
     Some(depth) =>
       prune_info(
         info,
-        replacement=@repr.DebugInfo::Omitted,
+        replacement=@repr.DebugInfo::omitted(),
         counts=info_adds_depth,
         depth~,
       )
@@ -183,7 +121,7 @@ fn prune_delta(
           if children.is_empty() {
             node
           } else {
-            @diff.DebugDelta::Same(@repr.DebugInfo::Omitted, [])
+            @diff.DebugDelta::Same(@repr.DebugInfo::omitted(), [])
           }
         } else {
           let next_depth = if info_adds_depth(label) { d - 1 } else { d }
@@ -194,18 +132,18 @@ fn prune_delta(
         }
       @diff.DebugDelta::Different(left, right) =>
         if d <= 0 {
-          @diff.DebugDelta::Same(@repr.DebugInfo::Omitted, [])
+          @diff.DebugDelta::Same(@repr.DebugInfo::omitted(), [])
         } else {
           @diff.DebugDelta::Different(
             prune_info(
               left,
-              replacement=@repr.DebugInfo::Omitted,
+              replacement=@repr.DebugInfo::omitted(),
               counts=info_adds_depth,
               depth=d,
             ),
             prune_info(
               right,
-              replacement=@repr.DebugInfo::Omitted,
+              replacement=@repr.DebugInfo::omitted(),
               counts=info_adds_depth,
               depth=d,
             ),
@@ -213,12 +151,12 @@ fn prune_delta(
         }
       @diff.DebugDelta::Extra1(x) =>
         if d <= 0 {
-          @diff.DebugDelta::Same(@repr.DebugInfo::Omitted, [])
+          @diff.DebugDelta::Same(@repr.DebugInfo::omitted(), [])
         } else {
           @diff.DebugDelta::Extra1(
             prune_info(
               x,
-              replacement=@repr.DebugInfo::Omitted,
+              replacement=@repr.DebugInfo::omitted(),
               counts=info_adds_depth,
               depth=d,
             ),
@@ -226,12 +164,12 @@ fn prune_delta(
         }
       @diff.DebugDelta::Extra2(x) =>
         if d <= 0 {
-          @diff.DebugDelta::Same(@repr.DebugInfo::Omitted, [])
+          @diff.DebugDelta::Same(@repr.DebugInfo::omitted(), [])
         } else {
           @diff.DebugDelta::Extra2(
             prune_info(
               x,
-              replacement=@repr.DebugInfo::Omitted,
+              replacement=@repr.DebugInfo::omitted(),
               counts=info_adds_depth,
               depth=d,
             ),

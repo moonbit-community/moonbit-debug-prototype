@@ -111,48 +111,13 @@ fn info_is_unimportant(info : @repr.DebugInfo) -> Bool {
 ///|
 /// Child nodes of a `DebugInfo` node.
 fn info_children(info : @repr.DebugInfo) -> Array[@repr.DebugInfo] {
-  match info {
-    @repr.DebugInfo::IntLit(_)
-    | @repr.DebugInfo::DoubleLit(_)
-    | @repr.DebugInfo::BoolLit(_)
-    | @repr.DebugInfo::CharLit(_)
-    | @repr.DebugInfo::StringLit(_)
-    | @repr.DebugInfo::Literal(_)
-    | @repr.DebugInfo::Omitted => []
-    @repr.DebugInfo::Array(xs)
-    | @repr.DebugInfo::Record(xs)
-    | @repr.DebugInfo::Ctor(_, xs)
-    | @repr.DebugInfo::Opaque(_, xs)
-    | @repr.DebugInfo::Assoc(_, xs) => xs
-    @repr.DebugInfo::Prop(_, value) => [value]
-    @repr.DebugInfo::AssocProp(key, value) => [key, value]
-  }
+  @repr.DebugInfo::children(info)
 }
 
 ///|
 /// A shallow copy of `info` containing only its “label” (children replaced).
 fn info_shallow(info : @repr.DebugInfo) -> @repr.DebugInfo {
-  match info {
-    @repr.DebugInfo::IntLit(_)
-    | @repr.DebugInfo::DoubleLit(_)
-    | @repr.DebugInfo::BoolLit(_)
-    | @repr.DebugInfo::CharLit(_)
-    | @repr.DebugInfo::StringLit(_)
-    | @repr.DebugInfo::Literal(_)
-    | @repr.DebugInfo::Omitted => info
-    @repr.DebugInfo::Array(_) => @repr.DebugInfo::Array([])
-    @repr.DebugInfo::Record(_) => @repr.DebugInfo::Record([])
-    @repr.DebugInfo::Ctor(name, _) => @repr.DebugInfo::Ctor(name, [])
-    @repr.DebugInfo::Opaque(name, _) => @repr.DebugInfo::Opaque(name, [])
-    @repr.DebugInfo::Assoc(name, _) => @repr.DebugInfo::Assoc(name, [])
-    @repr.DebugInfo::Prop(name, _) =>
-      @repr.DebugInfo::Prop(name, @repr.DebugInfo::Omitted)
-    @repr.DebugInfo::AssocProp(_, _) =>
-      @repr.DebugInfo::AssocProp(
-        @repr.DebugInfo::Omitted,
-        @repr.DebugInfo::Omitted,
-      )
-  }
+  @repr.DebugInfo::shallow(info)
 }
 
 ///|
