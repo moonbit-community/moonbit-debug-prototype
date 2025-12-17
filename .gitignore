@@ -1,3 +1,5 @@
 target/
+.DS_Store
 .mooncakes/
 .moonagent/
+uncovered.log

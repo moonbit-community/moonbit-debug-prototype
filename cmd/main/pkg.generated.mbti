@@ -2,6 +2,9 @@
 package "dii_user/moonbit_debugged/cmd/main"
 
 // Values
+pub fn demo_output() -> (String, String)
+
+pub fn run_demo() -> (String, String)
 
 // Errors
 
