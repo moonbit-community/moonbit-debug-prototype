@@ -1,0 +1,9 @@
+{
+  "is-main": true,
+  "import": [
+    {
+      "path": "dii_user/moonbit_debugged",
+      "alias": "lib"
+    }
+  ]
+}

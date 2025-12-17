@@ -1,0 +1,127 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "dii_user/moonbit_debugged"
+
+// Values
+pub fn array(Array[Repr]) -> Repr
+
+pub fn assoc(String, Array[(Repr, Repr)]) -> Repr
+
+pub fn bool(Bool) -> Repr
+
+pub fn char(Char) -> Repr
+
+pub fn collection(String, Array[Repr]) -> Repr
+
+pub fn ctor(String, Array[Repr]) -> Repr
+
+pub fn[T : Debug] debug(T) -> Repr
+
+pub let default_diff_options : DiffOptions
+
+pub let default_pretty_print_options : PrettyPrintOptions
+
+pub fn[T : Debug] diff(T, T) -> ReprDelta
+
+pub fn diff_repr(Repr, Repr) -> ReprDelta
+
+pub fn diff_repr_with(DiffOptions, Repr, Repr) -> ReprDelta
+
+pub fn[T : Debug] diff_with(DiffOptions, T, T) -> ReprDelta
+
+pub fn double(Double) -> Repr
+
+pub fn int(Int) -> Repr
+
+pub fn opaque_(String) -> Repr
+
+pub fn opaque_child(String, Repr) -> Repr
+
+pub fn opaque_literal(String, String) -> Repr
+
+pub fn[T : Debug] pretty_print(T) -> String
+
+pub fn pretty_print_delta(ReprDelta) -> String
+
+pub fn pretty_print_delta_with(PrettyPrintOptions, ReprDelta) -> String
+
+pub fn[T : Debug] pretty_print_diff(T, T) -> String
+
+pub fn[T : Debug] pretty_print_diff_with(PrettyPrintOptions, T, T) -> String
+
+pub fn pretty_print_repr(Repr) -> String
+
+pub fn pretty_print_repr_with(PrettyPrintOptions, Repr) -> String
+
+pub fn[T : Debug] pretty_print_with(PrettyPrintOptions, T) -> String
+
+pub fn record(Array[(String, Repr)]) -> Repr
+
+pub fn string(String) -> Repr
+
+// Errors
+
+// Types and methods
+type Content
+pub impl Eq for Content
+pub impl Show for Content
+
+type ContentParens
+pub impl Eq for ContentParens
+pub impl Show for ContentParens
+
+type Delta[T]
+pub impl[T : Compare] Compare for Delta[T]
+pub impl[T : Eq] Eq for Delta[T]
+
+pub(all) struct DiffOptions {
+  max_relative_error : Double
+}
+pub impl Eq for DiffOptions
+pub impl Show for DiffOptions
+
+type Label
+pub impl Compare for Label
+pub impl Eq for Label
+
+pub(all) struct PrettyPrintOptions {
+  max_depth : Int?
+  compact_threshold : Int
+  use_ansi : Bool
+}
+pub impl Eq for PrettyPrintOptions
+pub impl Show for PrettyPrintOptions
+
+pub struct Repr(Tree[Label])
+#deprecated
+pub fn Repr::inner(Self) -> Tree[Label]
+pub impl Compare for Repr
+pub impl Eq for Repr
+
+pub struct ReprDelta(Tree[Delta[Label]])
+#deprecated
+pub fn ReprDelta::inner(Self) -> Tree[Delta[Label]]
+pub impl Compare for ReprDelta
+pub impl Eq for ReprDelta
+
+type Tree[T]
+pub impl[T : Compare] Compare for Tree[T]
+pub impl[T : Eq] Eq for Tree[T]
+
+// Type aliases
+
+// Traits
+pub trait Debug {
+  debug(Self) -> Repr
+}
+pub impl Debug for Bool
+pub impl Debug for Char
+pub impl Debug for Int
+pub impl Debug for Int64
+pub impl Debug for UInt
+pub impl Debug for Double
+pub impl Debug for String
+pub impl[T : Debug] Debug for T?
+pub impl[T : Debug] Debug for Array[T]
+pub impl[K : Debug, V : Debug] Debug for Map[K, V]
+pub impl[A : Debug, B : Debug] Debug for (A, B)
+
