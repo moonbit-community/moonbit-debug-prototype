@@ -78,21 +78,21 @@ fn info_approx_eq(
   y : @repr.Repr,
 ) -> Bool {
   match (x, y) {
-    (@repr.Repr::DoubleLit(x1), @repr.Repr::DoubleLit(y1)) =>
+    (DoubleLit(x1), DoubleLit(y1)) =>
       relative_error(x1, y1) <= max_relative_error
-    (@repr.Repr::IntLit(x1), @repr.Repr::IntLit(y1)) => x1 == y1
-    (@repr.Repr::BoolLit(x1), @repr.Repr::BoolLit(y1)) => x1 == y1
-    (@repr.Repr::CharLit(x1), @repr.Repr::CharLit(y1)) => x1 == y1
-    (@repr.Repr::StringLit(x1), @repr.Repr::StringLit(y1)) => x1 == y1
-    (@repr.Repr::Literal(x1), @repr.Repr::Literal(y1)) => x1 == y1
-    (@repr.Repr::Omitted, @repr.Repr::Omitted) => true
-    (@repr.Repr::Array(_), @repr.Repr::Array(_)) => true
-    (@repr.Repr::Record(_), @repr.Repr::Record(_)) => true
-    (@repr.Repr::Prop(n1, _), @repr.Repr::Prop(n2, _)) => n1 == n2
-    (@repr.Repr::Ctor(n1, _), @repr.Repr::Ctor(n2, _)) => n1 == n2
-    (@repr.Repr::Opaque(n1, _), @repr.Repr::Opaque(n2, _)) => n1 == n2
-    (@repr.Repr::Assoc(n1, _), @repr.Repr::Assoc(n2, _)) => n1 == n2
-    (@repr.Repr::AssocProp(_, _), @repr.Repr::AssocProp(_, _)) => true
+    (IntLit(x1), IntLit(y1)) => x1 == y1
+    (BoolLit(x1), BoolLit(y1)) => x1 == y1
+    (CharLit(x1), CharLit(y1)) => x1 == y1
+    (StringLit(x1), StringLit(y1)) => x1 == y1
+    (Literal(x1), Literal(y1)) => x1 == y1
+    (Omitted, Omitted) => true
+    (Array(_), Array(_)) => true
+    (Record(_), Record(_)) => true
+    (Prop(n1, _), Prop(n2, _)) => n1 == n2
+    (Ctor(n1, _), Ctor(n2, _)) => n1 == n2
+    (Opaque(n1, _), Opaque(n2, _)) => n1 == n2
+    (Assoc(n1, _), Assoc(n2, _)) => n1 == n2
+    (AssocProp(_, _), AssocProp(_, _)) => true
     _ => false
   }
 }
@@ -101,9 +101,7 @@ fn info_approx_eq(
 /// Labels that are treated as structural “containers” (may be collapsed in diffs).
 fn info_is_unimportant(info : @repr.Repr) -> Bool {
   match info {
-    @repr.Repr::AssocProp(_, _)
-    | @repr.Repr::Array(_)
-    | @repr.Repr::Record(_) => true
+    AssocProp(_, _) | Array(_) | Record(_) => true
     _ => false
   }
 }
