@@ -8,6 +8,8 @@ import(
 )
 
 // Values
+pub fn arg(String, @repr.Repr) -> @repr.Repr
+
 pub fn array(Array[@repr.Repr]) -> @repr.Repr
 
 pub fn assoc(String, Array[(@repr.Repr, @repr.Repr)]) -> @repr.Repr

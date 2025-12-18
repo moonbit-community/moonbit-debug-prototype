@@ -89,6 +89,7 @@ fn info_approx_eq(
     (Array(_), Array(_)) => true
     (Record(_), Record(_)) => true
     (Prop(n1, _), Prop(n2, _)) => n1 == n2
+    (Arg(n1, _), Arg(n2, _)) => n1 == n2
     (Ctor(n1, _), Ctor(n2, _)) => n1 == n2
     (Opaque(n1, _), Opaque(n2, _)) => n1 == n2
     (Assoc(n1, _), Assoc(n2, _)) => n1 == n2

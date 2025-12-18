@@ -18,7 +18,7 @@ pub let default_pretty_print_options : PrettyPrintOptions = {
 /// Whether visiting this node should decrement the remaining depth budget.
 fn info_adds_depth(info : @repr.Repr) -> Bool {
   match info {
-    Prop(_, _) | AssocProp(_, _) => false
+    Prop(_, _) | Arg(_, _) | AssocProp(_, _) => false
     _ => true
   }
 }
@@ -65,6 +65,8 @@ fn prune_info(
     if d <= 0 {
       if children.is_empty() {
         node
+      } else if !counts(node) {
+        info_with_children(node, children.map(fn(child) { go(d, child) }))
       } else {
         replacement
       }
@@ -117,6 +119,8 @@ fn prune_delta(
         if d <= 0 {
           if children.is_empty() {
             node
+          } else if !info_adds_depth(label) {
+            Same(label, children.map(fn(child) { go(d, child) }))
           } else {
             Same(@repr.Repr::omitted(), [])
           }
@@ -190,6 +194,7 @@ fn info_size(info : @repr.Repr) -> Int {
     Array(_) => 1
     Record(_) => 2
     Prop(name, _) => if name.length() <= 15 { 0 } else { 1 }
+    Arg(name, _) => if name.length() <= 15 { 0 } else { 1 }
     Ctor(name, _) => if name.length() <= 15 { 1 } else { 2 }
     Opaque(name, _) => if name.length() <= 15 { 1 } else { 2 }
     Literal(s) => if s.length() <= 15 { 1 } else { 2 }
@@ -342,6 +347,24 @@ fn pretty_print_repr_go(
     AssocProp(_, _) =>
       match children {
         [key, val] => no_parens(surround("", ":", no_wrap(key)) + no_wrap(val))
+        _ => empty_content()
+      }
+    Arg(name, _) =>
+      match children {
+        [val] =>
+          match val.lines {
+            [] => empty_content()
+            [first] =>
+              no_parens({ size: 1 + val.size, lines: [name + "=" + first] })
+            [first, ..] => {
+              let n = val.lines.length()
+              let rest = if n <= 1 { [] } else { val.lines[1:n].to_array() }
+              no_parens({
+                size: 1 + val.size,
+                lines: [name + "=" + first] + rest,
+              })
+            }
+          }
         _ => empty_content()
       }
     Prop(name, _) =>

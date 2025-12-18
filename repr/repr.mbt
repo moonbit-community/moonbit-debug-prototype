@@ -9,6 +9,8 @@
 ///   of `(String, Repr)` pairs) to keep generic traversal/rewrite code simple:
 ///   every tree edge is a `Repr`, so `children/with_children`, pruning, and diff
 ///   can work uniformly across node kinds.
+/// - Labeled constructor arguments are encoded as `Ctor(name, [Arg(label, value), ...])`,
+///   which supports mixing positional and labeled args.
 /// - `Assoc` is encoded as `Assoc(name, [AssocProp(key, value), ...])`, which is
 ///   intended for “map-like” collections.
 /// - `Opaque` is intended for “container-like” wrappers that keep a type/tag but
@@ -30,6 +32,8 @@ pub enum Repr {
   Record(Array[Repr])
   /// Record field node. Conventionally appears only under `Record`.
   Prop(String, Repr)
+  /// Labeled argument node. Conventionally appears only under `Ctor`.
+  Arg(String, Repr)
   /// Constructor/application node: `Ctor(name, args)`.
   Ctor(String, Array[Repr])
   /// Opaque wrapper node: prints as `<name>` or `<name: ...>` and keeps children.
@@ -96,6 +100,12 @@ pub fn Repr::prop(name : String, value : Repr) -> Repr {
 }
 
 ///|
+/// Construct a `Arg(label, value)` labeled constructor argument node.
+pub fn Repr::arg(label : String, value : Repr) -> Repr {
+  Arg(label, value)
+}
+
+///|
 /// Construct a `Ctor(name, args)` node.
 pub fn Repr::ctor(name : String, args : Array[Repr]) -> Repr {
   Ctor(name, args)
@@ -149,7 +159,7 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
     | Literal(_)
     | Omitted => []
     Array(xs) | Record(xs) | Ctor(_, xs) | Opaque(_, xs) | Assoc(_, xs) => xs
-    Prop(_, value) => [value]
+    Prop(_, value) | Arg(_, value) => [value]
     AssocProp(key, value) => [key, value]
   }
 }
@@ -180,6 +190,11 @@ pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
         [value] => Prop(name, value)
         _ => Prop(name, Omitted)
       }
+    Arg(label, _) =>
+      match children {
+        [value] => Arg(label, value)
+        _ => Arg(label, Omitted)
+      }
     AssocProp(_, _) =>
       match children {
         [key, value] => AssocProp(key, value)
@@ -208,6 +223,7 @@ pub fn Repr::shallow(self : Repr) -> Repr {
     Opaque(name, _) => Opaque(name, [])
     Assoc(name, _) => Assoc(name, [])
     Prop(name, _) => Prop(name, Omitted)
+    Arg(label, _) => Arg(label, Omitted)
     AssocProp(_, _) => AssocProp(Omitted, Omitted)
   }
 }
@@ -267,6 +283,12 @@ pub fn record(fields : Array[(String, Repr)]) -> Repr {
 /// Construct a constructor/application `Repr` with a name and argument list.
 pub fn ctor(name : String, args : Array[Repr]) -> Repr {
   Repr::ctor(name, args)
+}
+
+///|
+/// Construct a labeled argument node.
+pub fn arg(label : String, value : Repr) -> Repr {
+  Repr::arg(label, value)
 }
 
 ///|

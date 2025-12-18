@@ -2,6 +2,8 @@
 package "dii_user/moonbit_debugged/repr"
 
 // Values
+pub fn arg(String, Repr) -> Repr
+
 pub fn array(Array[Repr]) -> Repr
 
 pub fn assoc(String, Array[(Repr, Repr)]) -> Repr
@@ -40,6 +42,7 @@ pub enum Repr {
   Array(Array[Repr])
   Record(Array[Repr])
   Prop(String, Repr)
+  Arg(String, Repr)
   Ctor(String, Array[Repr])
   Opaque(String, Array[Repr])
   Literal(String)
@@ -47,6 +50,7 @@ pub enum Repr {
   AssocProp(Repr, Repr)
   Omitted
 }
+pub fn Repr::arg(String, Self) -> Self
 pub fn Repr::array(Array[Self]) -> Self
 pub fn Repr::assoc(String, Array[Self]) -> Self
 pub fn Repr::assoc_prop(Self, Self) -> Self

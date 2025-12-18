@@ -40,6 +40,11 @@ pub fn ctor(name : String, args : Array[@repr.Repr]) -> @repr.Repr {
 }
 
 ///|
+pub fn arg(label : String, value : @repr.Repr) -> @repr.Repr {
+  @repr.arg(label, value)
+}
+
+///|
 pub fn opaque_child(name : String, child : @repr.Repr) -> @repr.Repr {
   @repr.opaque_child(name, child)
 }
