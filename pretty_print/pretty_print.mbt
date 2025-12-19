@@ -26,7 +26,7 @@ fn info_adds_depth(info : @repr.Repr) -> Bool {
 ///|
 /// Child nodes of a `Repr` node.
 fn info_children(info : @repr.Repr) -> Array[@repr.Repr] {
-  @repr.Repr::children(info)
+  info.children()
 }
 
 ///|
@@ -35,13 +35,13 @@ fn info_with_children(
   info : @repr.Repr,
   children : Array[@repr.Repr],
 ) -> @repr.Repr {
-  @repr.Repr::with_children(info, children)
+  info.with_children(children)
 }
 
 ///|
 /// A shallow copy of `info` containing only its “label” (children replaced).
 fn info_shallow(info : @repr.Repr) -> @repr.Repr {
-  @repr.Repr::shallow(info)
+  info.shallow()
 }
 
 ///|
@@ -531,7 +531,7 @@ pub fn pretty_print_delta_with(
   opts : PrettyPrintOptions,
   d : @diff.ReprDelta,
 ) -> String {
-  let delta = prune_delta(opts, @diff.ReprDelta::delta(d))
+  let delta = prune_delta(opts, d.delta())
   print_content(no_wrap(render_delta(opts, delta)))
 }
 

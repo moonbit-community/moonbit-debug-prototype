@@ -111,13 +111,13 @@ fn info_is_unimportant(info : @repr.Repr) -> Bool {
 ///|
 /// Child nodes of a `Repr` node.
 fn info_children(info : @repr.Repr) -> Array[@repr.Repr] {
-  @repr.Repr::children(info)
+  info.children()
 }
 
 ///|
 /// A shallow copy of `info` containing only its “label” (children replaced).
 fn info_shallow(info : @repr.Repr) -> @repr.Repr {
-  @repr.Repr::shallow(info)
+  info.shallow()
 }
 
 ///|

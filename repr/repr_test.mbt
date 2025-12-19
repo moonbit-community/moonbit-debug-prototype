@@ -1,8 +1,8 @@
 ///|
 test "repr: with_children preserves leaves" {
   let x = Repr::int(1)
-  assert_eq(Repr::children(x).length(), 0)
-  match Repr::with_children(x, [Repr::int(2)]) {
+  assert_eq(x.children().length(), 0)
+  match x.with_children([Repr::int(2)]) {
     IntLit(1) => ()
     _ => fail("expected leaf to ignore new children")
   }
@@ -11,12 +11,12 @@ test "repr: with_children preserves leaves" {
 ///|
 test "repr: with_children falls back for Prop and AssocProp" {
   let p = Repr::field("k", Repr::int(1))
-  match Repr::with_children(p, []) {
+  match p.with_children([]) {
     Field("k", Omitted) => ()
     _ => fail("expected Prop(_, Omitted) fallback")
   }
   let ap = Repr::entry(Repr::string("k"), Repr::int(1))
-  match Repr::with_children(ap, [Repr::int(0)]) {
+  match ap.with_children([Repr::int(0)]) {
     Entry(Omitted, Omitted) => ()
     _ => fail("expected AssocProp(Omitted, Omitted) fallback")
   }

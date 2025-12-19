@@ -4,11 +4,11 @@ test "debug_trait: diff_with uses explicit options" {
   let tolerant : @diff.DiffOptions = { max_relative_error: 1.0e-12 }
   let x : Double = 1.0
   let y : Double = 1.0 + 1.0e-13
-  match @diff.ReprDelta::delta(diff_with(strict, x, y)) {
+  match diff_with(strict, x, y).delta() {
     Different(_, _) => ()
     _ => fail("expected strict diff to be Different")
   }
-  match @diff.ReprDelta::delta(diff_with(tolerant, x, y)) {
+  match diff_with(tolerant, x, y).delta() {
     Same(DoubleLit(_), []) => ()
     _ => fail("expected tolerant diff to be Same")
   }

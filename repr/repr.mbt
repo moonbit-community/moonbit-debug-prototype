@@ -316,9 +316,9 @@ pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
 /// children and can hide fields by rewriting `Prop`/`Arg` nodes.
 pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
   fn go(node : Repr) -> Repr {
-    let children = Repr::children(node)
+    let children = node.children()
     let next_children = children.map(fn(child) { go(child) })
-    f(Repr::with_children(node, next_children))
+    f(node.with_children(next_children))
   }
 
   go(self)

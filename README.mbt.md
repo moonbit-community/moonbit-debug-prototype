@@ -75,12 +75,15 @@ examples.
 
 ## Doctest examples
 
-```mbt test
-inspect(pretty_print([1, 2, 3]), content="[ 1, 2, 3 ]")
-let opts = pretty_print_options(
-  max_depth=None,
-  compact_threshold=100,
-  use_ansi=false,
-)
-inspect(pretty_print_delta_with(opts, diff(1, 2)), content="-1 +2")
+```mbt check
+///|
+test {
+  inspect(pretty_print([1, 2, 3]), content="[ 1, 2, 3 ]")
+  let opts = pretty_print_options(
+    max_depth=None,
+    compact_threshold=100,
+    use_ansi=false,
+  )
+  inspect(pretty_print_delta_with(opts, diff(1, 2)), content="-1 +2")
+}
 ```
