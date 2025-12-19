@@ -35,3 +35,21 @@ test "repr: record and assoc builders are structural" {
     _ => fail("expected assoc to lower into AssocProp children")
   }
 }
+
+///|
+test "repr: traverse can hide fields" {
+  let r : Repr = Repr::record({
+    "user": Repr::string("alice"),
+    "password": Repr::string("secret"),
+  })
+  let redacted = r.traverse( node =>{
+    match node {
+      Prop("password", _) => Repr::prop("password", Repr::omitted())
+      _ => node
+    }
+  })
+  match redacted {
+    Record([Prop("user", StringLit("alice")), Prop("password", Omitted)]) => ()
+    _ => fail("expected traverse to omit password")
+  }
+}

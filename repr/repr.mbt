@@ -218,6 +218,21 @@ pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
 }
 
 ///|
+/// Traverse a `Repr` tree and rewrite each node with `f`.
+///
+/// `f` runs after children are traversed (post-order), so it sees rewritten
+/// children and can hide fields by rewriting `Prop`/`Arg` nodes.
+pub fn Repr::traverse(self : Repr, f : (Repr) -> Repr) -> Repr {
+  fn go(node : Repr) -> Repr {
+    let children = Repr::children(node)
+    let next_children = children.map(fn(child) { go(child) })
+    f(Repr::with_children(node, next_children))
+  }
+
+  go(self)
+}
+
+///|
 /// A shallow copy of `self` containing only its “label” (children replaced).
 ///
 /// This is used by diff/pretty-print when the structure is preserved but
