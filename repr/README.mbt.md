@@ -62,12 +62,7 @@ test {
     "y": Repr::string("hi"),
   })
   match r {
-    Repr::Record(
-      [
-        Repr::Field("x", Repr::IntLit(1)),
-        Repr::Field("y", Repr::StringLit("hi")),
-      ]
-    ) => ()
+    Record([Field("x", IntLit(1)), Field("y", StringLit("hi"))]) => ()
     _ => fail("unexpected Repr shape for record {x: Int; y: String}")
   }
 }
@@ -90,7 +85,7 @@ Unit is the empty tuple:
 test {
   let t : Repr = Repr::tuple([Repr::int(1), Repr::string("x")])
   match t {
-    Repr::Tuple([Repr::IntLit(1), Repr::StringLit("x")]) => ()
+    Tuple([IntLit(1), StringLit("x")]) => ()
     _ => fail("unexpected Repr shape for tuple (Int, String)")
   }
 }
@@ -116,13 +111,7 @@ test {
     Repr::labeled("y", Repr::string("hi")),
   ])
   match r {
-    Repr::Ctor(
-      "A",
-      [
-        Repr::Labeled("x", Repr::IntLit(1)),
-        Repr::Labeled("y", Repr::StringLit("hi")),
-      ]
-    ) => ()
+    Ctor("A", [Labeled("x", IntLit(1)), Labeled("y", StringLit("hi"))]) => ()
     _ => fail("unexpected Repr shape for labeled ctor A(x=Int, y=String)")
   }
 }

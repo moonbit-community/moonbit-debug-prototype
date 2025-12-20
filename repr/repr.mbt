@@ -172,7 +172,7 @@ pub fn Repr::array(children : Array[Repr]) -> Repr {
 ///|
 /// Construct a `Record` node from pre-built child `Repr`s.
 pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
-  Record(fields.to_array().map(fn(p) { Repr::Field(p.0, p.1) }))
+  Record(fields.to_array().map(fn(p) { Field(p.0, p.1) }))
 }
 
 ///|
