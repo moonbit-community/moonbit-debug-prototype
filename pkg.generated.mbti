@@ -47,6 +47,8 @@ pub fn[T : Debug] pretty_print_with(@pretty_print.PrettyPrintOptions, T) -> Stri
 // Types and methods
 
 // Type aliases
+pub using @repr {type CtorArg}
+
 pub using @repr {type Repr}
 
 // Traits

@@ -1,7 +1,7 @@
 ///|
-/// Re-export `Repr` type and smart constructors from `@repr`.
+/// Re-export `Repr` and constructor-argument helpers from `@repr`.
 /// Use `Repr::int(x)`, `Repr::string(s)`, etc. to construct values.
-pub using @repr {type Repr}
+pub using @repr {type Repr, type CtorArg}
 
 ///|
 /// Diffing (forwarded to `@diff`).

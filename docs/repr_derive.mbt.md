@@ -203,18 +203,28 @@ enum LabeledValue {
 }
 ```
 
-Use `EnumLabeledArg(label, value)` nodes (children of `Enum`) to preserve the labels:
+Use `ctor_args` with `CtorArg::Labeled` to preserve the labels:
 
-- `A(x=1, y="s")` → `ctor("A", [arg("x", int(1)), arg("y", string("s"))])`
-- `B(x=1, "s")` → `ctor("B", [arg("x", int(1)), string("s")])`
+- `A(x=1, y="s")` →
+  `@repr.ctor_args("A", [@repr.CtorArg::Labeled("x", @repr.int(1)), @repr.CtorArg::Labeled("y", @repr.string("s"))])`
+- `B(x=1, "s")` →
+  `@repr.ctor_args("B", [@repr.CtorArg::Labeled("x", @repr.int(1)), @repr.CtorArg::Pos(@repr.string("s"))])`
 
 Example implementation:
 
 ```mbt
 pub impl @dbg.Debug for LabeledValue with debug(self) {
   match self {
-    A(x~, y~) => @dbg.ctor("A", [@dbg.arg("x", @dbg.debug(x)), @dbg.arg("y", @dbg.debug(y))])
-    B(x~, s) => @dbg.ctor("B", [@dbg.arg("x", @dbg.debug(x)), @dbg.debug(s)])
+    A(x~, y~) =>
+      @dbg.ctor_args(
+        "A",
+        [@dbg.CtorArg::Labeled("x", @dbg.debug(x)), @dbg.CtorArg::Labeled("y", @dbg.debug(y))],
+      )
+    B(x~, s) =>
+      @dbg.ctor_args(
+        "B",
+        [@dbg.CtorArg::Labeled("x", @dbg.debug(x)), @dbg.CtorArg::Pos(@dbg.debug(s))],
+      )
     D(n) => @dbg.ctor("D", [@dbg.debug(n)])
   }
 }

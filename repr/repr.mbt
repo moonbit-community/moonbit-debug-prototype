@@ -79,8 +79,29 @@ pub enum Repr {
 } derive(Eq, Compare)
 
 ///|
+/// Constructor arguments for `Repr::ctor_args`.
+pub(all) enum CtorArg {
+  /// Positional constructor argument.
+  Pos(Repr)
+  /// Labeled constructor argument.
+  Labeled(String, Repr)
+} derive(Eq, Compare)
+
+///|
 pub fn Repr::unit() -> Repr {
   UnitLit
+}
+
+///|
+/// Construct a positional constructor argument.
+pub fn CtorArg::pos(value : Repr) -> CtorArg {
+  Pos(value)
+}
+
+///|
+/// Construct a labeled constructor argument.
+pub fn CtorArg::labeled(label : String, value : Repr) -> CtorArg {
+  Labeled(label, value)
 }
 
 ///|
@@ -173,25 +194,30 @@ pub fn Repr::array(children : Array[Repr]) -> Repr {
 ///|
 /// Construct a `Record` node from pre-built child `Repr`s.
 pub fn Repr::record(fields : Map[String, Repr]) -> Repr {
-  Record(fields.to_array().map(fn(p) { RecordField(p.0, p.1) }))
-}
-
-///|
-/// Construct a `RecordField(name, value)` record field node.
-pub fn Repr::field(name : String, value : Repr) -> Repr {
-  RecordField(name, value)
-}
-
-///|
-/// Construct a `EnumLabeledArg(label, value)` labeled enum argument node.
-pub fn Repr::labeled(label : String, value : Repr) -> Repr {
-  EnumLabeledArg(label, value)
+  Record(fields.to_array().map(fn(p) { Repr::field(p.0, p.1) }))
 }
 
 ///|
 /// Construct an `Enum(name, args)` node for enum/constructor applications.
+///
+/// This assumes positional arguments only. Use `Repr::ctor_args` to mix labeled
+/// and positional arguments.
 pub fn Repr::ctor(name : String, args : Array[Repr]) -> Repr {
   Enum(name, args)
+}
+
+///|
+/// Construct an `Enum(name, args)` node from labeled/positional arguments.
+pub fn Repr::ctor_args(name : String, args : Array[CtorArg]) -> Repr {
+  Enum(
+    name,
+    args.map(fn(arg) {
+      match arg {
+        Pos(value) => value
+        Labeled(label, value) => Repr::labeled(label, value)
+      }
+    }),
+  )
 }
 
 ///|
@@ -218,12 +244,6 @@ pub fn Repr::dict(contents : Array[(Repr, Repr)]) -> Repr {
       Repr::entry(k, v)
     }),
   )
-}
-
-///|
-/// Construct a `MapEntry(key, value)` key/value node for map literals.
-pub fn Repr::entry(key : Repr, value : Repr) -> Repr {
-  MapEntry(key, value)
 }
 
 ///|

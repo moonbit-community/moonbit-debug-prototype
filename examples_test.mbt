@@ -22,9 +22,9 @@ pub impl Debug for Expr with debug(self) {
     Lit(n) => Repr::ctor("Lit", [debug(n)])
     Var(s) => Repr::ctor("Var", [debug(s)])
     Add(left~, right~) =>
-      Repr::ctor("Add", [
-        Repr::labeled("left", debug(left)),
-        Repr::labeled("right", debug(right)),
+      Repr::ctor_args("Add", [
+        CtorArg::Labeled("left", debug(left)),
+        CtorArg::Labeled("right", debug(right)),
       ])
   }
 }
