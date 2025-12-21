@@ -89,12 +89,12 @@ fn info_approx_eq(
     (Tuple(_), Tuple(_)) => true
     (Array(_), Array(_)) => true
     (Record(_), Record(_)) => true
-    (Field(n1, _), Field(n2, _)) => n1 == n2
-    (Labeled(n1, _), Labeled(n2, _)) => n1 == n2
-    (Ctor(n1, _), Ctor(n2, _)) => n1 == n2
+    (RecordField(n1, _), RecordField(n2, _)) => n1 == n2
+    (EnumLabeledArg(n1, _), EnumLabeledArg(n2, _)) => n1 == n2
+    (Enum(n1, _), Enum(n2, _)) => n1 == n2
     (Opaque(n1, _), Opaque(n2, _)) => n1 == n2
-    (Dict(_), Dict(_)) => true
-    (Entry(_, _), Entry(_, _)) => true
+    (Map(_), Map(_)) => true
+    (MapEntry(_, _), MapEntry(_, _)) => true
     _ => false
   }
 }
@@ -103,7 +103,7 @@ fn info_approx_eq(
 /// Labels that are treated as structural “containers” (may be collapsed in diffs).
 fn info_is_unimportant(info : @repr.Repr) -> Bool {
   match info {
-    Entry(_, _) | Tuple(_) | Array(_) | Record(_) => true
+    MapEntry(_, _) | Tuple(_) | Array(_) | Record(_) => true
     _ => false
   }
 }

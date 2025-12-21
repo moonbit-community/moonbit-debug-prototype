@@ -15,9 +15,9 @@ constructors ( `Repr::...` ) or the convenience functions ( `int` , `record` , .
 
 A record node is represented structurally as:
 
-* `Record([Prop(name, value), ...])`
+* `Record([RecordField(name, value), ...])`
 
-### Why `Record(Array[Repr])` + `Prop` ?
+### Why `Record(Array[Repr])` + `RecordField` ?
 
 You might wonder why we don’t model records more “directly” as something like
 `Record(Array[(String, Repr)])` . The choice here is deliberate:
@@ -26,7 +26,7 @@ You might wonder why we don’t model records more “directly” as something l
   like `Repr::children` , `Repr::with_children` , pruning, and the diff algorithm
   can treat records exactly like arrays/ctors/opaque nodes without special-cases
   for `(String, Repr)` pairs.
-* **Field names live in the tree**: a field is a real node (`Prop(name, ...)`), 
+* **Field names live in the tree**: a field is a real node (`RecordField(name, ...)`),
   so pretty-printing and diffing can use the same “label + children” pipeline
   everywhere.
 * **Keeps the public API small**: an alternative representation would either
@@ -34,8 +34,8 @@ You might wonder why we don’t model records more “directly” as something l
   aren’t `Repr` values) or require additional parallel APIs just for records.
 
 If you want “map-like” semantics (key/value pairs as first-class children), use
-`Assoc(name, [AssocProp(key, value), ...])` , which is what the `Debug` instance
-for `Map` uses.
+`Map([MapEntry(key, value), ...])` , which is what the `Debug` instance for
+`Map` uses.
 
 So for a value conceptually shaped like:
 
@@ -47,8 +47,8 @@ the corresponding `Repr` is:
 
 ```text
 Record([
-  Prop("x", IntLit(...)),
-  Prop("y", StringLit(...)),
+  RecordField("x", IntLit(...)),
+  RecordField("y", StringLit(...)),
 ])
 ```
 
@@ -62,7 +62,8 @@ test {
     "y": Repr::string("hi"),
   })
   match r {
-    Record([Field("x", IntLit(1)), Field("y", StringLit("hi"))]) => ()
+    Record([RecordField("x", IntLit(1)), RecordField("y", StringLit("hi"))]) =>
+      ()
     _ => fail("unexpected Repr shape for record {x: Int; y: String}")
   }
 }
@@ -94,12 +95,12 @@ test {
 ## Labeled constructor arguments
 
 MoonBit enum variants (and tuple-struct constructors) can have labeled arguments.
-To preserve those labels in a `Repr` , use `Arg(label, value)` nodes as children
-of `Ctor` :
+To preserve those labels in a `Repr` , use `EnumLabeledArg(label, value)` nodes
+as children of `Enum` :
 
-* `Ctor("A", [Arg("x", ...), Arg("y", ...)])` prints as `A(x=..., y=...)`
+* `Enum("A", [EnumLabeledArg("x", ...), EnumLabeledArg("y", ...)])` prints as `A(x=..., y=...)`
 * you can freely mix positional and labeled args:
-`Ctor("B", [Arg("x", ...), ...])` prints as `B(x=..., ...)`
+`Enum("B", [EnumLabeledArg("x", ...), ...])` prints as `B(x=..., ...)`
 
 ### Example (runnable)
 
@@ -111,7 +112,10 @@ test {
     Repr::labeled("y", Repr::string("hi")),
   ])
   match r {
-    Ctor("A", [Labeled("x", IntLit(1)), Labeled("y", StringLit("hi"))]) => ()
+    Enum(
+      "A",
+      [EnumLabeledArg("x", IntLit(1)), EnumLabeledArg("y", StringLit("hi"))]
+    ) => ()
     _ => fail("unexpected Repr shape for labeled ctor A(x=Int, y=String)")
   }
 }

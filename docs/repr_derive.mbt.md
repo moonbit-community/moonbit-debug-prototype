@@ -135,7 +135,7 @@ the inner value is an `Array` node).
 
 ## 4) Record/struct types (named fields)
 
-Use a `Record` node containing `Prop(name, value)` children:
+Use a `Record` node containing `RecordField(name, value)` children:
 
 - `struct { x : Int; y : String }` → `@repr.record([("x", ...), ("y", ...)])`
 
@@ -158,7 +158,7 @@ Notes:
 
 - Field names are printed unquoted when they are valid identifiers; otherwise
   they are printed as quoted string literals (useful for map/object-like data).
-- Record `Prop` nodes do not count towards the “depth budget” when pretty
+- Record `RecordField` nodes do not count towards the “depth budget” when pretty
   printing, so you still see the field names when values are pruned.
 
 ---
@@ -203,7 +203,7 @@ enum LabeledValue {
 }
 ```
 
-Use `Arg(label, value)` nodes (children of `Ctor`) to preserve the labels:
+Use `EnumLabeledArg(label, value)` nodes (children of `Enum`) to preserve the labels:
 
 - `A(x=1, y="s")` → `ctor("A", [arg("x", int(1)), arg("y", string("s"))])`
 - `B(x=1, "s")` → `ctor("B", [arg("x", int(1)), string("s")])`
@@ -224,16 +224,15 @@ pub impl @dbg.Debug for LabeledValue with debug(self) {
 
 ## 7) Map-like / association containers
 
-Use `Assoc(name, [AssocProp(key, value), ...])` for key/value collections:
+Use `Map([MapEntry(key, value), ...])` for key/value collections:
 
-- `Map[K, V]` → `@repr.assoc("Map", [(k1, v1), ...].map(debug))`
+- `Map[K, V]` → `@repr.dict([(k1, v1), ...].map(debug))`
 
 Example:
 
 ```mbt
 pub impl[K : @dbg.Debug, V : @dbg.Debug] @dbg.Debug for Map[K, V] with debug(self) {
-  @dbg.assoc(
-    "Map",
+  @dbg.dict(
     self.to_array().map(fn(kv) {
       let (k, v) = kv
       (@dbg.debug(k), @dbg.debug(v))
@@ -242,7 +241,7 @@ pub impl[K : @dbg.Debug, V : @dbg.Debug] @dbg.Debug for Map[K, V] with debug(sel
 }
 ```
 
-This prints as `<Map: { "a": 1, "b": 2 }>`.
+This prints as `{ "a": 1, "b": 2 }`.
 
 ---
 
@@ -273,12 +272,12 @@ If you implement `derive(Repr)` in the compiler, a good default mapping is:
 - tuple / unit → `Tuple([...])`
 - array-like sequences → `Array([...])` (optionally wrapped via `Opaque`/`collection`)
 - generic collection wrappers (e.g. `Collection[A]`) → add `A : Repr` constraint and map over elements
-- record structs → `Record([Prop(field, value), ...])`
-- tuple structs/newtypes → `Ctor(TypeName, [...])`
+- record structs → `Record([RecordField(field, value), ...])`
+- tuple structs/newtypes → `Enum(TypeName, [...])`
 - enum variants:
-  - positional args → `Ctor(VariantName, [...])`
-  - labeled args → `Ctor(VariantName, [Arg(label, value), ...])` (mixed allowed)
-- maps/dicts → `Assoc(TypeName, [AssocProp(key, value), ...])`
+  - positional args → `Enum(VariantName, [...])`
+  - labeled args → `Enum(VariantName, [EnumLabeledArg(label, value), ...])` (mixed allowed)
+- maps/dicts → `Map([MapEntry(key, value), ...])`
 
 For cyclic graphs (possible with `mut`/`Ref`), a derived implementation should
 also track visited nodes to avoid infinite recursion (policy choice: print

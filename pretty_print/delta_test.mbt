@@ -35,7 +35,7 @@ test "diff printing: record field changes keep field name" {
 }
 
 ///|
-test "prune: does not count Prop as depth" {
+test "prune: does not count RecordField as depth" {
   let r = @repr.Repr::record({
     "x": @repr.Repr::ctor("A", [@repr.Repr::ctor("B", [@repr.Repr::int(1)])]),
   })

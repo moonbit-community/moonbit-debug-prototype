@@ -43,13 +43,13 @@ test "diff: tolerant doubles compare same" {
 test "Repr is readonly but constructible via smart ctors" {
   let info = @repr.Repr::ctor("X", [@repr.Repr::int(1)])
   match info {
-    Ctor("X", [IntLit(1)]) => ()
-    _ => fail("expected Ctor(\"X\", [IntLit(1)])")
+    Enum("X", [IntLit(1)]) => ()
+    _ => fail("expected Enum(\"X\", [IntLit(1)])")
   }
   assert_eq(info.children().length(), 1)
   match info.shallow() {
-    Ctor("X", []) => ()
-    _ => fail("expected shallow Ctor(\"X\", [])")
+    Enum("X", []) => ()
+    _ => fail("expected shallow Enum(\"X\", [])")
   }
   match @repr.Repr::omitted() {
     Omitted => ()
