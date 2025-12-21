@@ -52,7 +52,8 @@ pub fn Repr::int64(Int64) -> Self
 pub fn Repr::literal(String) -> Self
 pub fn Repr::omitted() -> Self
 pub fn Repr::opaque_(String, Array[Self]) -> Self
-pub fn Repr::prune_info(Self, replacement~ : Self, depth~ : Int) -> Self
+#label_migration(replacement, fill=false)
+pub fn Repr::prune_info(Self, replacement? : Self, depth~ : Int) -> Self
 pub fn Repr::record(Map[String, Self]) -> Self
 pub fn Repr::shallow(Self) -> Self
 pub fn Repr::string(String) -> Self

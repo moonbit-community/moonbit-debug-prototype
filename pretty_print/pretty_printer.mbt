@@ -112,7 +112,7 @@ fn no_parens(r : ContentParens) -> Content {
 ///|
 /// Trim whitespace (helper for compact formatting).
 fn trim_space(s : String) -> String {
-  s.trim_space().to_string()
+  s.trim().to_string()
 }
 
 ///|

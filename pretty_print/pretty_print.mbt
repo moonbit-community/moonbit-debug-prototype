@@ -19,7 +19,7 @@ pub let default_pretty_print_options : PrettyPrintOptions = {
 fn prune_repr_info(opts : PrettyPrintOptions, info : @repr.Repr) -> @repr.Repr {
   match opts.max_depth {
     None => info
-    Some(depth) => info.prune_info(replacement=@repr.Repr::omitted(), depth~)
+    Some(depth) => info.prune_info(depth=depth)
   }
 }
 
@@ -49,21 +49,21 @@ fn prune_delta(
           Same(@repr.Repr::omitted(), [])
         } else {
           Different(
-            left.prune_info(replacement=@repr.Repr::omitted(), depth=d),
-            right.prune_info(replacement=@repr.Repr::omitted(), depth=d),
+            left.prune_info(depth=d),
+            right.prune_info(depth=d),
           )
         }
       Extra1(x) =>
         if d <= 0 {
           Same(@repr.Repr::omitted(), [])
         } else {
-          Extra1(x.prune_info(replacement=@repr.Repr::omitted(), depth=d))
+          Extra1(x.prune_info(depth=d))
         }
       Extra2(x) =>
         if d <= 0 {
           Same(@repr.Repr::omitted(), [])
         } else {
-          Extra2(x.prune_info(replacement=@repr.Repr::omitted(), depth=d))
+          Extra2(x.prune_info(depth=d))
         }
     }
   }
