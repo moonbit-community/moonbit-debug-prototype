@@ -110,26 +110,21 @@ fn no_parens(r : ContentParens) -> Content {
 }
 
 ///|
-/// Trim whitespace (helper for compact formatting).
-fn trim_space(s : String) -> String {
-  s.trim().to_string()
-}
-
-///|
 /// Compact multi-line output into a single line when possible.
+#warnings("-deprecated")
 fn compact_lines(lines : Array[String]) -> Array[String] {
   match lines {
     [] => []
     [x] => [x]
     [first, ..] => {
       let n = lines.length()
-      let middle = if n <= 2 { [] } else { lines[1:n - 1].to_array() }
+      let middle : ArrayView[String] = if n <= 2 { [] } else { lines[1:n - 1] }
       let last = lines[n - 1]
-      let parts : Array[String] = [first]
+      let parts : Array[StringView] = [first]
       for m in middle {
-        parts.push(trim_space(m))
+        parts.push(m.trim_space())
       }
-      parts.push(trim_space(last))
+      parts.push(last.trim_space())
       [parts.join(" "[:])]
     }
   }
