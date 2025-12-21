@@ -15,63 +15,11 @@ pub let default_pretty_print_options : PrettyPrintOptions = {
 }
 
 ///|
-/// Whether visiting this node should decrement the remaining depth budget.
-fn info_adds_depth(info : @repr.Repr) -> Bool {
-  match info {
-    RecordField(_, _) | EnumLabeledArg(_, _) | MapEntry(_, _) => false
-    _ => true
-  }
-}
-
-///|
-/// Prune a `Repr` value to a given depth (replacing pruned subtrees).
-fn prune_info(
-  info : @repr.Repr,
-  replacement~ : @repr.Repr,
-  counts~ : (@repr.Repr) -> Bool,
-  depth~ : Int,
-) -> @repr.Repr {
-  fn int_max(x : Int, y : Int) -> Int {
-    if x > y {
-      x
-    } else {
-      y
-    }
-  }
-
-  fn go(d : Int, node : @repr.Repr) -> @repr.Repr {
-    let children = node.children()
-    if d <= 0 {
-      if children.is_empty() {
-        node
-      } else if !counts(node) {
-        node.with_children(children.map(fn(child) { go(d, child) }))
-      } else {
-        replacement
-      }
-    } else if children.is_empty() {
-      node
-    } else {
-      let next_depth = if counts(node) { d - 1 } else { d }
-      node.with_children(children.map(fn(child) { go(next_depth, child) }))
-    }
-  }
-
-  go(int_max(1, depth), info)
-}
-
-///|
 /// Prune a `Repr` using `opts.max_depth` (replacing with `Omitted`).
 fn prune_repr_info(opts : PrettyPrintOptions, info : @repr.Repr) -> @repr.Repr {
   match opts.max_depth {
     None => info
-    Some(depth) =>
-      prune_info(
-        info,
-        replacement=@repr.Repr::omitted(),
-        counts=info_adds_depth,
-        depth~,
-      )
+    Some(depth) => info.prune_info(replacement=@repr.Repr::omitted(), depth~)
   }
 }
 
@@ -81,27 +29,19 @@ fn prune_delta(
   opts : PrettyPrintOptions,
   delta : @diff.DebugDelta,
 ) -> @diff.DebugDelta {
-  fn int_max(x : Int, y : Int) -> Int {
-    if x > y {
-      x
-    } else {
-      y
-    }
-  }
-
   fn go(d : Int, node : @diff.DebugDelta) -> @diff.DebugDelta {
     match node {
       Same(label, children) =>
         if d <= 0 {
           if children.is_empty() {
             node
-          } else if !info_adds_depth(label) {
+          } else if !label.info_adds_depth() {
             Same(label, children.map(fn(child) { go(d, child) }))
           } else {
             Same(@repr.Repr::omitted(), [])
           }
         } else {
-          let next_depth = if info_adds_depth(label) { d - 1 } else { d }
+          let next_depth = if label.info_adds_depth() { d - 1 } else { d }
           Same(label, children.map(fn(child) { go(next_depth, child) }))
         }
       Different(left, right) =>
@@ -109,52 +49,28 @@ fn prune_delta(
           Same(@repr.Repr::omitted(), [])
         } else {
           Different(
-            prune_info(
-              left,
-              replacement=@repr.Repr::omitted(),
-              counts=info_adds_depth,
-              depth=d,
-            ),
-            prune_info(
-              right,
-              replacement=@repr.Repr::omitted(),
-              counts=info_adds_depth,
-              depth=d,
-            ),
+            left.prune_info(replacement=@repr.Repr::omitted(), depth=d),
+            right.prune_info(replacement=@repr.Repr::omitted(), depth=d),
           )
         }
       Extra1(x) =>
         if d <= 0 {
           Same(@repr.Repr::omitted(), [])
         } else {
-          Extra1(
-            prune_info(
-              x,
-              replacement=@repr.Repr::omitted(),
-              counts=info_adds_depth,
-              depth=d,
-            ),
-          )
+          Extra1(x.prune_info(replacement=@repr.Repr::omitted(), depth=d))
         }
       Extra2(x) =>
         if d <= 0 {
           Same(@repr.Repr::omitted(), [])
         } else {
-          Extra2(
-            prune_info(
-              x,
-              replacement=@repr.Repr::omitted(),
-              counts=info_adds_depth,
-              depth=d,
-            ),
-          )
+          Extra2(x.prune_info(replacement=@repr.Repr::omitted(), depth=d))
         }
     }
   }
 
   match opts.max_depth {
     None => delta
-    Some(depth) => go(int_max(1, depth), delta)
+    Some(depth) => go(Int::max(1, depth), delta)
   }
 }
 

@@ -45,12 +45,14 @@ pub fn Repr::ctor(String, Array[(String?, Self)]) -> Self
 pub fn Repr::dict(Array[(Self, Self)]) -> Self
 pub fn Repr::double(Double) -> Self
 pub fn Repr::float(Float) -> Self
+pub fn Repr::info_adds_depth(Self) -> Bool
 pub fn Repr::int(Int) -> Self
 pub fn Repr::int16(Int16) -> Self
 pub fn Repr::int64(Int64) -> Self
 pub fn Repr::literal(String) -> Self
 pub fn Repr::omitted() -> Self
 pub fn Repr::opaque_(String, Array[Self]) -> Self
+pub fn Repr::prune_info(Self, replacement~ : Self, depth~ : Int) -> Self
 pub fn Repr::record(Map[String, Self]) -> Self
 pub fn Repr::shallow(Self) -> Self
 pub fn Repr::string(String) -> Self
