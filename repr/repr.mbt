@@ -233,6 +233,12 @@ pub fn Repr::omitted() -> Repr {
 
 ///|
 /// Child nodes of a `Repr` node.
+///
+/// Design notes:
+/// - Leaves return `[]`; container nodes return their stored children.
+/// - `Field`/`Labeled` have one child; `Entry` has two.
+/// - `children` and `with_children` form a partial lens for tree rewrites:
+///   `self.with_children(self.children()) == self`.
 pub fn Repr::children(self : Repr) -> Array[Repr] {
   match self {
     UnitLit
@@ -266,8 +272,10 @@ pub fn Repr::children(self : Repr) -> Array[Repr] {
 ///
 /// Notes:
 /// - Leaf nodes ignore `children` and return themselves.
-/// - `Prop` expects exactly one child and falls back to `Prop(name, Omitted)`.
+/// - `Field`/`Labeled` expect exactly one child and fall back to `Omitted`.
 /// - `Entry` expects exactly two children and falls back to `Entry(Omitted, Omitted)`.
+/// - This is intentionally not a total inverse of `children`: invalid arity is
+///   clamped to keep the tree well-formed for generic traversal.
 pub fn Repr::with_children(self : Repr, children : Array[Repr]) -> Repr {
   match self {
     UnitLit
