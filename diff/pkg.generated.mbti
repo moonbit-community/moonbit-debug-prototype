@@ -6,11 +6,7 @@ import(
 )
 
 // Values
-pub let default_diff_options : DiffOptions
-
-pub fn diff_repr(@repr.Repr, @repr.Repr) -> ReprDelta
-
-pub fn diff_repr_with(DiffOptions, @repr.Repr, @repr.Repr) -> ReprDelta
+pub fn diff_repr(@repr.Repr, @repr.Repr, max_relative_error? : Double) -> ReprDelta
 
 // Errors
 
@@ -23,12 +19,6 @@ pub(all) enum DebugDelta {
 }
 pub impl Compare for DebugDelta
 pub impl Eq for DebugDelta
-
-pub(all) struct DiffOptions {
-  max_relative_error : Double
-}
-pub impl Eq for DiffOptions
-pub impl Show for DiffOptions
 
 pub struct ReprDelta(DebugDelta)
 pub fn ReprDelta::delta(Self) -> DebugDelta

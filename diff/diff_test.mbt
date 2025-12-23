@@ -30,10 +30,9 @@ test "diff: extra elements are marked" {
 
 ///|
 test "diff: tolerant doubles compare same" {
-  let opts : DiffOptions = { max_relative_error: 1.0e-12 }
   let x = @repr.Repr::double(1.0)
   let y = @repr.Repr::double(1.0 + 1.0e-13)
-  match diff_repr_with(opts, x, y).delta() {
+  match diff_repr(x, y, max_relative_error=1.0e-12).delta() {
     Same(DoubleLit(_), []) => ()
     _ => fail("expected Same(DoubleLit, [])")
   }

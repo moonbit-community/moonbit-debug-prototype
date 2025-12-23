@@ -1,14 +1,12 @@
 ///|
-test "debug_trait: diff_with uses explicit options" {
-  let strict : @diff.DiffOptions = { max_relative_error: 0.0 }
-  let tolerant : @diff.DiffOptions = { max_relative_error: 1.0e-12 }
+test "debug_trait: diff uses explicit options" {
   let x : Double = 1.0
   let y : Double = 1.0 + 1.0e-13
-  match diff_with(strict, x, y).delta() {
+  match diff(x, y, max_relative_error=0.0).delta() {
     Different(_, _) => ()
     _ => fail("expected strict diff to be Different")
   }
-  match diff_with(tolerant, x, y).delta() {
+  match diff(x, y, max_relative_error=1.0e-12).delta() {
     Same(DoubleLit(_), []) => ()
     _ => fail("expected tolerant diff to be Same")
   }

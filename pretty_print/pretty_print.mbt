@@ -1,34 +1,27 @@
 ///|
-/// Options controlling pruning/formatting and ANSI markers.
-pub(all) struct PrettyPrintOptions {
-  max_depth : Int?
-  compact_threshold : Int
-  use_ansi : Bool
-} derive(Show, Eq)
+/// Default max depth for pruning.
+let default_max_depth : Int = 4
 
 ///|
-/// Default pretty-print options used by `pretty_print_repr` / `pretty_print_delta`.
-pub let default_pretty_print_options : PrettyPrintOptions = {
-  max_depth: Some(4),
-  compact_threshold: 8,
-  use_ansi: true,
-}
+/// Default compact threshold for layout decisions.
+let default_compact_threshold : Int = 8
 
 ///|
-/// Prune a `Repr` using `opts.max_depth` (replacing with `Omitted`).
-fn prune_repr_info(opts : PrettyPrintOptions, info : @repr.Repr) -> @repr.Repr {
-  match opts.max_depth {
+/// Default ANSI color setting.
+let default_use_ansi : Bool = true
+
+///|
+/// Prune a `Repr` using max_depth (replacing with `Omitted`).
+fn prune_repr_info(max_depth : Int?, info : @repr.Repr) -> @repr.Repr {
+  match max_depth {
     None => info
     Some(depth) => info.prune_info(depth~)
   }
 }
 
 ///|
-/// Prune a `DebugDelta` using `opts.max_depth` (replacing with `Same(Omitted, [])`).
-fn prune_delta(
-  opts : PrettyPrintOptions,
-  delta : @diff.DebugDelta,
-) -> @diff.DebugDelta {
+/// Prune a `DebugDelta` using max_depth (replacing with `Same(Omitted, [])`).
+fn prune_delta(max_depth : Int?, delta : @diff.DebugDelta) -> @diff.DebugDelta {
   fn go(d : Int, node : @diff.DebugDelta) -> @diff.DebugDelta {
     match node {
       Same(label, children) =>
@@ -65,14 +58,14 @@ fn prune_delta(
     }
   }
 
-  match opts.max_depth {
+  match max_depth {
     None => delta
     Some(depth) => go(Int::max(1, depth), delta)
   }
 }
 
 ///|
-/// Heuristic “size” of a node for compact-vs-multiline decisions.
+/// Heuristic "size" of a node for compact-vs-multiline decisions.
 fn info_size(info : @repr.Repr) -> Int {
   match info {
     UnitLit => 1
@@ -97,7 +90,7 @@ fn info_size(info : @repr.Repr) -> Int {
 }
 
 ///|
-/// Heuristic “size” of a delta for compact-vs-multiline decisions.
+/// Heuristic "size" of a delta for compact-vs-multiline decisions.
 fn delta_root_size(delta : @diff.DebugDelta) -> Int {
   match delta {
     Same(label, _) => info_size(label)
@@ -293,10 +286,10 @@ fn ansi_reset() -> String {
 ///|
 /// Mark added content with `+` (and optionally ANSI color).
 fn mark_added(
-  opts : PrettyPrintOptions,
+  use_ansi : Bool,
   x : @printer.ContentParens,
 ) -> @printer.ContentParens {
-  if opts.use_ansi {
+  if use_ansi {
     @printer.surround(ansi_green() + "+", ansi_reset(), x)
   } else {
     @printer.surround("+", "", x)
@@ -306,10 +299,10 @@ fn mark_added(
 ///|
 /// Mark removed content with `-` (and optionally ANSI color).
 fn mark_removed(
-  opts : PrettyPrintOptions,
+  use_ansi : Bool,
   x : @printer.ContentParens,
 ) -> @printer.ContentParens {
-  if opts.use_ansi {
+  if use_ansi {
     @printer.surround(ansi_red() + "-", ansi_reset(), x)
   } else {
     @printer.surround("-", "", x)
@@ -319,14 +312,17 @@ fn mark_removed(
 ///|
 /// Render a `Repr` as `Content` with resizing decisions.
 fn render_repr(
-  opts : PrettyPrintOptions,
+  compact_threshold : Int,
+  use_ansi : Bool,
   info : @repr.Repr,
 ) -> @printer.Content {
   let label = info.shallow()
-  let children = info.children().map(fn(child) { render_repr(opts, child) })
+  let children = info
+    .children()
+    .map(fn(child) { render_repr(compact_threshold, use_ansi, child) })
   with_resizing(
     info_size(label),
-    opts.compact_threshold,
+    compact_threshold,
     fn(children) { pretty_print_repr_go(label, children) },
     children,
   )
@@ -335,33 +331,36 @@ fn render_repr(
 ///|
 /// Render a `DebugDelta` as `Content` with resizing decisions.
 fn render_delta(
-  opts : PrettyPrintOptions,
+  compact_threshold : Int,
+  use_ansi : Bool,
   delta : @diff.DebugDelta,
 ) -> @printer.Content {
   match delta {
     Same(label, children_delta) => {
-      let children = children_delta.map(fn(child) { render_delta(opts, child) })
+      let children = children_delta.map(fn(child) {
+        render_delta(compact_threshold, use_ansi, child)
+      })
       with_resizing(
         delta_root_size(delta),
-        opts.compact_threshold,
+        compact_threshold,
         fn(children) { pretty_print_repr_go(label, children) },
         children,
       )
     }
     Different(left, right) => {
       let children : Array[@printer.Content] = [
-        render_repr(opts, left),
-        render_repr(opts, right),
+        render_repr(compact_threshold, use_ansi, left),
+        render_repr(compact_threshold, use_ansi, right),
       ]
       with_resizing(
         0,
-        opts.compact_threshold,
+        compact_threshold,
         fn(children) {
           match children {
             [left, right] =>
               @printer.no_parens(
-                mark_removed(opts, left.no_wrap()) +
-                mark_added(opts, right.no_wrap()),
+                mark_removed(use_ansi, left.no_wrap()) +
+                mark_added(use_ansi, right.no_wrap()),
               )
             _ => @printer.empty_content()
           }
@@ -370,13 +369,15 @@ fn render_delta(
       )
     }
     Extra1(x) => {
-      let children : Array[@printer.Content] = [render_repr(opts, x)]
+      let children : Array[@printer.Content] = [
+        render_repr(compact_threshold, use_ansi, x),
+      ]
       with_resizing(
         0,
-        opts.compact_threshold,
+        compact_threshold,
         fn(children) {
           match children {
-            [x] => @printer.no_parens(mark_removed(opts, x.no_wrap()))
+            [x] => @printer.no_parens(mark_removed(use_ansi, x.no_wrap()))
             _ => @printer.empty_content()
           }
         },
@@ -384,13 +385,15 @@ fn render_delta(
       )
     }
     Extra2(x) => {
-      let children : Array[@printer.Content] = [render_repr(opts, x)]
+      let children : Array[@printer.Content] = [
+        render_repr(compact_threshold, use_ansi, x),
+      ]
       with_resizing(
         0,
-        opts.compact_threshold,
+        compact_threshold,
         fn(children) {
           match children {
-            [x] => @printer.no_parens(mark_added(opts, x.no_wrap()))
+            [x] => @printer.no_parens(mark_added(use_ansi, x.no_wrap()))
             _ => @printer.empty_content()
           }
         },
@@ -401,33 +404,41 @@ fn render_delta(
 }
 
 ///|
-/// Pretty-print a `Repr` using explicit `PrettyPrintOptions`.
-pub fn pretty_print_repr_with(
-  opts : PrettyPrintOptions,
+/// Pretty-print a `Repr` with optional parameters.
+pub fn pretty_print_repr(
   r : @repr.Repr,
+  max_depth? : Int,
+  compact_threshold? : Int,
+  use_ansi? : Bool,
 ) -> String {
-  let info = prune_repr_info(opts, r)
-  @printer.print_content(render_repr(opts, info).no_wrap())
+  let max_depth : Int? = match max_depth {
+    Some(_) => max_depth
+    None => Some(default_max_depth)
+  }
+  let compact_threshold = compact_threshold.unwrap_or(default_compact_threshold)
+  let use_ansi = use_ansi.unwrap_or(default_use_ansi)
+  let info = prune_repr_info(max_depth, r)
+  @printer.print_content(
+    render_repr(compact_threshold, use_ansi, info).no_wrap(),
+  )
 }
 
 ///|
-/// Pretty-print a `Repr` using `default_pretty_print_options`.
-pub fn pretty_print_repr(r : @repr.Repr) -> String {
-  pretty_print_repr_with(default_pretty_print_options, r)
-}
-
-///|
-/// Pretty-print a `ReprDelta` using explicit `PrettyPrintOptions`.
-pub fn pretty_print_delta_with(
-  opts : PrettyPrintOptions,
+/// Pretty-print a `ReprDelta` with optional parameters.
+pub fn pretty_print_delta(
   d : @diff.ReprDelta,
+  max_depth? : Int,
+  compact_threshold? : Int,
+  use_ansi? : Bool,
 ) -> String {
-  let delta = prune_delta(opts, d.delta())
-  @printer.print_content(render_delta(opts, delta).no_wrap())
-}
-
-///|
-/// Pretty-print a `ReprDelta` using `default_pretty_print_options`.
-pub fn pretty_print_delta(d : @diff.ReprDelta) -> String {
-  pretty_print_delta_with(default_pretty_print_options, d)
+  let max_depth : Int? = match max_depth {
+    Some(_) => max_depth
+    None => Some(default_max_depth)
+  }
+  let compact_threshold = compact_threshold.unwrap_or(default_compact_threshold)
+  let use_ansi = use_ansi.unwrap_or(default_use_ansi)
+  let delta = prune_delta(max_depth, d.delta())
+  @printer.print_content(
+    render_delta(compact_threshold, use_ansi, delta).no_wrap(),
+  )
 }

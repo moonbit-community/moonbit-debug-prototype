@@ -53,22 +53,17 @@ pub impl @dbg.Debug for Person with debug(self) {
 
 ## Options
 
-### Pretty printing (`PrettyPrintOptions`)
+All options are passed directly as optional parameters to functions:
 
-- `PrettyPrintOptions` is defined in `dii_user/moonbit_debugged/pretty_print`.
-  If you only import `dii_user/moonbit_debugged`, use `pretty_print_options(...)`
-  to construct it.
-- `max_depth`: prune large values (`Some(n)`), or disable with `None`
-- `compact_threshold`: controls single-line vs multi-line rendering
-- `use_ansi`: enables `+`/`-` with ANSI colors in diffs
+### Pretty printing
 
-### Diffing (`DiffOptions`)
+- `max_depth?`: optional depth limit; omit for default (4), or pass `max_depth=n` to prune
+- `compact_threshold?`: controls single-line vs multi-line rendering (default: 8)
+- `use_ansi?`: enables `+`/`-` with ANSI colors in diffs (default: true)
 
-`DiffOptions` is defined in `dii_user/moonbit_debugged/diff`. If you only import
-`dii_user/moonbit_debugged`, use `diff_options(...)` to construct it.
+### Diffing
 
-Use `diff_with` / `diff_repr_with` to set float tolerance via
-`max_relative_error`.
+- `max_relative_error?`: float tolerance for comparing `Double` values
 
 See `docs_test.mbt` and `examples_test.mbt` for runnable, snapshot-based
 examples.
@@ -79,11 +74,9 @@ examples.
 ///|
 test {
   inspect(pretty_print([1, 2, 3]), content="[ 1, 2, 3 ]")
-  let opts = pretty_print_options(
-    max_depth=None,
-    compact_threshold=100,
-    use_ansi=false,
+  inspect(
+    pretty_print_diff(1, 2, compact_threshold=100, use_ansi=false),
+    content="-1 +2",
   )
-  inspect(pretty_print_delta_with(opts, diff(1, 2)), content="-1 +2")
 }
 ```

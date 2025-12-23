@@ -3,44 +3,23 @@ package "dii_user/moonbit_debugged"
 
 import(
   "dii_user/moonbit_debugged/diff"
-  "dii_user/moonbit_debugged/pretty_print"
   "dii_user/moonbit_debugged/repr"
 )
 
 // Values
 pub fn[T : Debug] debug(T) -> @repr.Repr
 
-pub let default_diff_options : @diff.DiffOptions
+pub fn[T : Debug] diff(T, T, max_relative_error? : Double) -> @diff.ReprDelta
 
-pub let default_pretty_print_options : @pretty_print.PrettyPrintOptions
+pub fn diff_repr(@repr.Repr, @repr.Repr, max_relative_error? : Double) -> @diff.ReprDelta
 
-pub fn[T : Debug] diff(T, T) -> @diff.ReprDelta
+pub fn[T : Debug] pretty_print(T, max_depth? : Int, compact_threshold? : Int, use_ansi? : Bool) -> String
 
-pub fn diff_options(max_relative_error~ : Double) -> @diff.DiffOptions
+pub fn pretty_print_delta(@diff.ReprDelta, max_depth? : Int, compact_threshold? : Int, use_ansi? : Bool) -> String
 
-pub fn diff_repr(@repr.Repr, @repr.Repr) -> @diff.ReprDelta
+pub fn[T : Debug] pretty_print_diff(T, T, max_depth? : Int, compact_threshold? : Int, use_ansi? : Bool, max_relative_error? : Double) -> String
 
-pub fn diff_repr_with(@diff.DiffOptions, @repr.Repr, @repr.Repr) -> @diff.ReprDelta
-
-pub fn[T : Debug] diff_with(@diff.DiffOptions, T, T) -> @diff.ReprDelta
-
-pub fn[T : Debug] pretty_print(T) -> String
-
-pub fn pretty_print_delta(@diff.ReprDelta) -> String
-
-pub fn pretty_print_delta_with(@pretty_print.PrettyPrintOptions, @diff.ReprDelta) -> String
-
-pub fn[T : Debug] pretty_print_diff(T, T) -> String
-
-pub fn[T : Debug] pretty_print_diff_with(@pretty_print.PrettyPrintOptions, T, T) -> String
-
-pub fn pretty_print_options(max_depth~ : Int?, compact_threshold~ : Int, use_ansi~ : Bool) -> @pretty_print.PrettyPrintOptions
-
-pub fn pretty_print_repr(@repr.Repr) -> String
-
-pub fn pretty_print_repr_with(@pretty_print.PrettyPrintOptions, @repr.Repr) -> String
-
-pub fn[T : Debug] pretty_print_with(@pretty_print.PrettyPrintOptions, T) -> String
+pub fn pretty_print_repr(@repr.Repr, max_depth? : Int, compact_threshold? : Int, use_ansi? : Bool) -> String
 
 // Errors
 
@@ -48,6 +27,8 @@ pub fn[T : Debug] pretty_print_with(@pretty_print.PrettyPrintOptions, T) -> Stri
 
 // Type aliases
 pub using @repr {type Repr}
+
+pub using @diff {type ReprDelta}
 
 // Traits
 pub(open) trait Debug {

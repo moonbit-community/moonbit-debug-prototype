@@ -15,13 +15,8 @@ test "pretty_print delta for map (no ansi)" {
   let items : Array[(String, Int)] = [("a", 3), ("b", 6), ("c", 13)]
   let x : Map[String, Int] = Map::from_array(items[:])
   let y : Map[String, Int] = Map::from_array((items + [("b", 9)])[:])
-  let opts = pretty_print_options(
-    max_depth=Some(6),
-    compact_threshold=40,
-    use_ansi=false,
-  )
   inspect(
-    pretty_print_delta_with(opts, diff(x, y)),
+    pretty_print_diff(x, y, max_depth=6, compact_threshold=40, use_ansi=false),
     content=(
       #|{ "a": 3, "b": -6 +9, "c": 13 }
     ),

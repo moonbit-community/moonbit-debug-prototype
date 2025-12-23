@@ -1,9 +1,4 @@
 ///|
-fn print_opts() -> PrettyPrintOptions {
-  { max_depth: None, compact_threshold: 100, use_ansi: false }
-}
-
-///|
 enum Tag {
   Ok(String)
 }
@@ -36,7 +31,7 @@ test "docs: custom type pretty_print" {
   let sample : Example = { answer: 42, xs: [1, 2, 3], tag: Ok("done") }
   let r = example_repr(sample)
   inspect(
-    pretty_print_repr_with(print_opts(), r),
+    pretty_print_repr(r, compact_threshold=100, use_ansi=false),
     content="{ answer: 42, xs: [ 1, 2, 3 ], tag: Ok(\"done\") }",
   )
 }
@@ -69,7 +64,7 @@ test "docs: record keys are quoted when needed" {
   }
   let r = weird_keys_repr(sample)
   inspect(
-    pretty_print_repr_with(print_opts(), r),
+    pretty_print_repr(r, compact_threshold=100, use_ansi=false),
     content="{ snake_case_ok: 1, \"with space\": 2, \"k-v\": 3, \"CamelCase\": 4 }",
   )
 }
@@ -89,10 +84,7 @@ test "docs: compact_threshold controls single-line vs multi-line" {
   let sample : Numbers = { xs: [1, 2, 3] }
   let r = numbers_repr(sample)
   let compact = pretty_print_repr(r)
-  let expanded = pretty_print_repr_with(
-    { max_depth: None, compact_threshold: 0, use_ansi: false },
-    r,
-  )
+  let expanded = pretty_print_repr(r, compact_threshold=0, use_ansi=false)
   inspect(compact, content="[ 1, 2, 3 ]")
   inspect(
     expanded,
@@ -128,7 +120,7 @@ test "docs: labeled enum arguments are printed" {
   let sample : Shape = Line(Point(x=1, y=2), Point(x=3, y=4))
   let r = shape_repr(sample)
   inspect(
-    pretty_print_repr_with(print_opts(), r),
+    pretty_print_repr(r, compact_threshold=100, use_ansi=false),
     content="Line(Point(x=1, y=2), Point(x=3, y=4))",
   )
 }
@@ -153,7 +145,7 @@ test "docs: dict prints as k: v pairs" {
   let sample : DictExample = { entries: [("a", 1), ("b", 2)] }
   let r = dict_repr(sample)
   inspect(
-    pretty_print_repr_with(print_opts(), r),
+    pretty_print_repr(r, compact_threshold=100, use_ansi=false),
     content="{ \"a\": 1, \"b\": 2 }",
   )
 }
@@ -175,7 +167,10 @@ fn opaque_repr(value : OpaqueExample) -> @repr.Repr {
 test "docs: opaque wrappers show tag and children" {
   let sample : OpaqueExample = { label: "Vec", xs: [1, 2] }
   let r = opaque_repr(sample)
-  inspect(pretty_print_repr_with(print_opts(), r), content="<Vec: [ 1, 2 ]>")
+  inspect(
+    pretty_print_repr(r, compact_threshold=100, use_ansi=false),
+    content="<Vec: [ 1, 2 ]>",
+  )
 }
 
 ///|
@@ -189,16 +184,21 @@ fn float_repr(sample : FloatSample) -> @repr.Repr {
 }
 
 ///|
-test "docs: diff_repr_with can ignore tiny float changes" {
-  let strict : @diff.DiffOptions = { max_relative_error: 0.0 }
-  let tolerant : @diff.DiffOptions = { max_relative_error: 1.0e-12 }
-  let print_opts = print_opts()
+test "docs: diff_repr can ignore tiny float changes" {
   let x = float_repr({ value: 1.0 })
   let y = float_repr({ value: 1.0 + 1.0e-13 })
   inspect(
     (
-      pretty_print_delta_with(print_opts, @diff.diff_repr_with(strict, x, y)),
-      pretty_print_delta_with(print_opts, @diff.diff_repr_with(tolerant, x, y)),
+      pretty_print_delta(
+        @diff.diff_repr(x, y, max_relative_error=0.0),
+        compact_threshold=100,
+        use_ansi=false,
+      ),
+      pretty_print_delta(
+        @diff.diff_repr(x, y, max_relative_error=1.0e-12),
+        compact_threshold=100,
+        use_ansi=false,
+      ),
     ),
     content="(\"-1 +1.0000000000001\", \"1\")",
   )

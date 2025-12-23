@@ -7,26 +7,13 @@ import(
 )
 
 // Values
-pub let default_pretty_print_options : PrettyPrintOptions
+pub fn pretty_print_delta(@diff.ReprDelta, max_depth? : Int, compact_threshold? : Int, use_ansi? : Bool) -> String
 
-pub fn pretty_print_delta(@diff.ReprDelta) -> String
-
-pub fn pretty_print_delta_with(PrettyPrintOptions, @diff.ReprDelta) -> String
-
-pub fn pretty_print_repr(@repr.Repr) -> String
-
-pub fn pretty_print_repr_with(PrettyPrintOptions, @repr.Repr) -> String
+pub fn pretty_print_repr(@repr.Repr, max_depth? : Int, compact_threshold? : Int, use_ansi? : Bool) -> String
 
 // Errors
 
 // Types and methods
-pub(all) struct PrettyPrintOptions {
-  max_depth : Int?
-  compact_threshold : Int
-  use_ansi : Bool
-}
-pub impl Eq for PrettyPrintOptions
-pub impl Show for PrettyPrintOptions
 
 // Type aliases
 

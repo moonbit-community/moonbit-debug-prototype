@@ -24,16 +24,8 @@ pub fn ReprDelta::from_delta(delta : DebugDelta) -> ReprDelta {
 }
 
 ///|
-/// Options for diffing, including float tolerance for `Double`.
-pub(all) struct DiffOptions {
-  max_relative_error : Double
-} derive(Show, Eq)
-
-///|
-/// Default diff options used by `diff_repr`.
-pub let default_diff_options : DiffOptions = {
-  max_relative_error: 0.000000000001,
-}
+/// Default max relative error for float comparisons.
+let default_max_relative_error : Double = 0.000000000001
 
 ///|
 /// Absolute value for `Double`.
@@ -71,7 +63,7 @@ fn relative_error(x : Double, y : Double) -> Double {
 }
 
 ///|
-/// Compare two node “labels”, with float tolerance for `DoubleLit`.
+/// Compare two node "labels", with float tolerance for `DoubleLit`.
 fn info_approx_eq(
   max_relative_error : Double,
   x : @repr.Repr,
@@ -100,7 +92,7 @@ fn info_approx_eq(
 }
 
 ///|
-/// Labels that are treated as structural “containers” (may be collapsed in diffs).
+/// Labels that are treated as structural "containers" (may be collapsed in diffs).
 fn info_is_unimportant(info : @repr.Repr) -> Bool {
   match info {
     MapEntry(_, _) | Tuple(_) | Array(_) | Record(_) => true
@@ -115,7 +107,7 @@ fn info_children(info : @repr.Repr) -> Array[@repr.Repr] {
 }
 
 ///|
-/// A shallow copy of `info` containing only its “label” (children replaced).
+/// A shallow copy of `info` containing only its "label" (children replaced).
 fn info_shallow(info : @repr.Repr) -> @repr.Repr {
   info.shallow()
 }
@@ -182,19 +174,14 @@ fn diff_info_with(
 }
 
 ///|
-/// Diff two `Repr` values using explicit `DiffOptions`.
-pub fn diff_repr_with(
-  opts : DiffOptions,
+/// Diff two `Repr` values with optional float tolerance.
+pub fn diff_repr(
   x : @repr.Repr,
   y : @repr.Repr,
+  max_relative_error? : Double,
 ) -> ReprDelta {
-  ReprDelta::from_delta(
-    diff_info_with(x, y, max_relative_error=opts.max_relative_error),
+  let max_relative_error = max_relative_error.unwrap_or(
+    default_max_relative_error,
   )
-}
-
-///|
-/// Diff two `Repr` values using `default_diff_options`.
-pub fn diff_repr(x : @repr.Repr, y : @repr.Repr) -> ReprDelta {
-  diff_repr_with(default_diff_options, x, y)
+  ReprDelta::from_delta(diff_info_with(x, y, max_relative_error~))
 }
