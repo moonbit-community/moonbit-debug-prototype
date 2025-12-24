@@ -8,10 +8,7 @@
     ],
     "import": [
         "moonbit-community/debug/repr",
-        {
-            "path": "moonbit-community/debug",
-            "alias": "debug"
-        }
+        "moonbit-community/debug"
     ],
     "formatter": {
         "ignore": [

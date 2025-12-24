@@ -85,10 +85,8 @@ examples.
 test {
   inspect(pretty_print([1, 2, 3]), content="[ 1, 2, 3 ]")
   inspect(
-
     pretty_print_diff(1, 2, compact_threshold=100, use_ansi=false),
     content="-1 +2",
-
   )
 }
 ```
