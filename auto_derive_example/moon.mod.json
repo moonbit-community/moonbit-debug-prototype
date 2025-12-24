@@ -1,19 +1,19 @@
 {
-  "name": "dii_user/example",
-  "version": "0.1.0",
-  "deps": {
-   "dii_user/moonbit_debugged": {
-      "path": "../debug"
-    }
-  },
-  "bin-deps": {
-    "dii_user/auto_derive": {
-      "path": "../auto_derive"
-    } 
-  },
-  "readme": "README.mbt.md",
-  "repository": "",
-  "license": "Apache-2.0",
-  "keywords": [],
-  "description": ""
+    "name": "dii_user/example",
+    "version": "0.1.0",
+    "deps": {
+        "moonbit-community/debug": {
+            "path": "../debug"
+        }
+    },
+    "bin-deps": {
+        "dii_user/auto_derive": {
+            "path": "../auto_derive"
+        }
+    },
+    "readme": "README.mbt.md",
+    "repository": "",
+    "license": "Apache-2.0",
+    "keywords": [],
+    "description": ""
 }

@@ -1,12 +1,12 @@
-# dii_user/moonbit_debugged
+# moonbit-community/debug
 
 A tiny `Debug` + `diff` + pretty-printer library for MoonBit.
 
 It provides:
 
-- A `Debug` trait that turns values into a structural `Repr`
-- A tree-based `diff` (`ReprDelta`) with configurable float tolerance
-- A pretty printer for both `Repr` and `ReprDelta` (optionally with ANSI marks)
+* A `Debug` trait that turns values into a structural `Repr`
+* A tree-based `diff` (`ReprDelta`) with configurable float tolerance
+* A pretty printer for both `Repr` and `ReprDelta` (optionally with ANSI marks)
 
 ## Project structure
 
@@ -14,9 +14,9 @@ The current pre-build command design forces us to separate the build script (wri
 into its own module and use a local binary dependency to invoke it. 
 Therefore, the project is structured as follows:
 
-- `debug/`: the main library module
-- `auto_derive/`: the build script module that generates `Debug` implementations
-- `auto_derive_example/`: an example module that uses the `debug` library and build script to generate code
+* `debug/`: the main library module
+* `auto_derive/`: the build script module that generates `Debug` implementations
+* `auto_derive_example/`: an example module that uses the `debug` library and build script to generate code
 
 ## Quickstart
 
@@ -26,11 +26,11 @@ Run the small demo:
 moon run cmd/main
 ```
 
-In another package, import this module in `moon.pkg.json`:
+In another package, import this module in `moon.pkg.json` :
 
 ```json
 {
-  "import": [{ "path": "dii_user/moonbit_debugged", "alias": "dbg" }]
+  "import": [{ "path": "moonbit-community/debug", "alias": "dbg" }]
 }
 ```
 
@@ -46,7 +46,7 @@ fn show_examples {
 
 ## Implement `Debug` for your own types
 
-Use `record`, `ctor`, `array`, and friends to build a `Repr`:
+Use `record` , `ctor` , `array` , and friends to build a `Repr` :
 
 ```mbt
 ///|
@@ -67,13 +67,13 @@ All options are passed directly as optional parameters to functions:
 
 ### Pretty printing
 
-- `max_depth?`: optional depth limit; omit for default (4), or pass `max_depth=n` to prune
-- `compact_threshold?`: controls single-line vs multi-line rendering (default: 8)
-- `use_ansi?`: enables `+`/`-` with ANSI colors in diffs (default: true)
+* `max_depth?`: optional depth limit; omit for default (4), or pass `max_depth=n` to prune
+* `compact_threshold?`: controls single-line vs multi-line rendering (default: 8)
+* `use_ansi?`: enables `+`/`-` with ANSI colors in diffs (default: true)
 
 ### Diffing
 
-- `max_relative_error?`: float tolerance for comparing `Double` values
+* `max_relative_error?`: float tolerance for comparing `Double` values
 
 See `docs_test.mbt` and `examples_test.mbt` for runnable, snapshot-based
 examples.
@@ -85,8 +85,10 @@ examples.
 test {
   inspect(pretty_print([1, 2, 3]), content="[ 1, 2, 3 ]")
   inspect(
+
     pretty_print_diff(1, 2, compact_threshold=100, use_ansi=false),
     content="-1 +2",
+
   )
 }
 ```

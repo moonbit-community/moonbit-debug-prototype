@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "dii_user/moonbit_debugged/pretty_printer"
+package "moonbit-community/debug/pretty_printer"
 
 // Values
 pub fn comma_seq(String, String, Array[ContentParens]) -> Content

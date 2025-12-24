@@ -1,9 +1,9 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "dii_user/moonbit_debugged/pretty_print"
+package "moonbit-community/debug/pretty_print"
 
 import(
-  "dii_user/moonbit_debugged/diff"
-  "dii_user/moonbit_debugged/repr"
+  "moonbit-community/debug/diff"
+  "moonbit-community/debug/repr"
 )
 
 // Values

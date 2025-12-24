@@ -1,5 +1,8 @@
 {
   "import": [
-    { "path": "dii_user/moonbit_debugged/repr", "alias": "repr" }
+    {
+      "path": "moonbit-community/debug/repr",
+      "alias": "repr"
+    }
   ]
 }

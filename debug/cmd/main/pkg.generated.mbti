@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "dii_user/moonbit_debugged/cmd/main"
+package "moonbit-community/debug/cmd/main"
 
 // Values
 pub fn demo_output() -> (String, String)

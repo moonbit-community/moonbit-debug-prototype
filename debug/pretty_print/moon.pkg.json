@@ -1,7 +1,16 @@
 {
   "import": [
-    { "path": "dii_user/moonbit_debugged/repr", "alias": "repr" },
-    { "path": "dii_user/moonbit_debugged/diff", "alias": "diff" },
-    { "path": "dii_user/moonbit_debugged/pretty_printer", "alias": "printer" }
+    {
+      "path": "moonbit-community/debug/repr",
+      "alias": "repr"
+    },
+    {
+      "path": "moonbit-community/debug/diff",
+      "alias": "diff"
+    },
+    {
+      "path": "moonbit-community/debug/pretty_printer",
+      "alias": "printer"
+    }
   ]
 }

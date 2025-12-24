@@ -7,9 +7,9 @@
         }
     ],
     "import": [
-        "dii_user/moonbit_debugged/repr",
+        "moonbit-community/debug/repr",
         {
-            "path": "dii_user/moonbit_debugged",
+            "path": "moonbit-community/debug",
             "alias": "debug"
         }
     ],

@@ -2,7 +2,7 @@
   "is-main": true,
   "import": [
     {
-      "path": "dii_user/moonbit_debugged",
+      "path": "moonbit-community/debug",
       "alias": "lib"
     }
   ]

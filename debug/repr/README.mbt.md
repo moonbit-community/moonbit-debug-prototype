@@ -1,11 +1,11 @@
-# `dii_user/moonbit_debugged/repr`
+# `moonbit-community/debug/repr`
 
 This package defines `Repr` : a small, structural, tree-shaped representation
-used by `dii_user/moonbit_debugged` for:
+used by `moonbit-community/debug` for:
 
-* pretty-printing (`dii_user/moonbit_debugged/pretty_print`)
-* diffing (`dii_user/moonbit_debugged/diff`)
-* the `Debug` trait (`dii_user/moonbit_debugged`)
+* pretty-printing (`moonbit-community/debug/pretty_print`)
+* diffing (`moonbit-community/debug/diff`)
+* the `Debug` trait (`moonbit-community/debug`)
 
 `Repr` is exported as a readonly enum ( `pub enum Repr` ), so it can be
 pattern-matched outside the package but not directly constructed. Use the smart
@@ -26,7 +26,7 @@ You might wonder why we don’t model records more “directly” as something l
   like `Repr::children` , `Repr::with_children` , pruning, and the diff algorithm
   can treat records exactly like arrays/ctors/opaque nodes without special-cases
   for `(String, Repr)` pairs.
-* **Field names live in the tree**: a field is a real node (`RecordField(name, ...)`),
+* **Field names live in the tree**: a field is a real node (`RecordField(name, ...)`), 
   so pretty-printing and diffing can use the same “label + children” pipeline
   everywhere.
 * **Keeps the public API small**: an alternative representation would either
@@ -99,8 +99,10 @@ To preserve those labels in a `Repr` , use `Repr::ctor` with optional labels:
 
 * `Repr::ctor("A", [(Some("x"), ...), (Some("y"), ...)])`
   prints as `A(x=..., y=...)`
+
 * you can freely mix positional and labeled args:
-`Repr::ctor("B", [(Some("x"), ...), (None, ...)])`
+ `Repr::ctor("B", [(Some("x"), ...), (None, ...)])`
+
 prints as `B(x=..., ...)`
 
 ### Example (runnable)
