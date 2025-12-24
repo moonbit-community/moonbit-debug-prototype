@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "dii_user/auto_derive"
+package "moonbit-community/debug_deriving"
 
 // Values
 
@@ -10,4 +10,3 @@ package "dii_user/auto_derive"
 // Type aliases
 
 // Traits
-

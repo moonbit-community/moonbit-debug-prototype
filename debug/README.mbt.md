@@ -1,12 +1,32 @@
 # moonbit-community/debug
 
-A tiny `Debug` + `diff` + pretty-printer library for MoonBit.
+An experimental `Debug` + `diff` + pretty-printer library for MoonBit. We plan 
+to add this to the standard library when it is more mature.
 
 It provides:
 
 * A `Debug` trait that turns values into a structural `Repr`
 * A tree-based `diff` (`ReprDelta`) with configurable float tolerance
 * A pretty printer for both `Repr` and `ReprDelta` (optionally with ANSI marks)
+* A binary to auto-generate `Debug` implementations for your types
+
+Goals: 
+
+- A way to debug values and show the diff, with pretty-printing
+
+- Replacing Some Roles of `Show` and `ToJson`
+
+  The current `Show` trait produces output that is not suitable for debugging, as it lacks indentation and line breaks.  
+  The `ToJson` trait produces JSON, which is more readable with `@json.inspect` but not ideal for MoonBit-specific types (e.g., enums).  
+  It can also confuse users who expect `ToJson` to produce structured data rather than a debug representation.
+
+  With the introduction of `Debug`, the `Show` trait can focus on producing specialized output (such as `Json::stringify`, `String::to_string`, etc.), and `derive(Show)` will be deprecated.
+
+
+Non-goals:
+
+- Deserializing from `Repr` back to original values
+- Output a valid moonbit code representation
 
 ## Project structure
 
@@ -59,6 +79,32 @@ struct Person {
 pub impl @dbg.Debug for Person with debug(self) {
   @dbg.record([("name", @dbg.debug(self.name)), ("age", @dbg.debug(self.age))])
 }
+```
+
+## Auto deriving `Debug`
+
+To automatically generate `Debug` implementations for your types:
+
+1. add `moonbit-community/debug_deriving` as a binary dependency in your `moon.mod.json` 
+2. add a `pre-build` command that runs the `debug_deriving` binary, for example:
+
+```json
+{
+  "pre-build": [
+    {
+      "command": "$mod_dir/.mooncakes/moonbit-community/debug_deriving $input $output",
+      "input": "input.mbt",
+      "output": "output.mbt"
+    }
+  ]
+}
+``` 
+
+3. in your `input.mbt`, add `#debug.derive` attribute to your types:
+
+```mbt
+#debug.derive
+struct Pos(Int, Int)
 ```
 
 ## Options

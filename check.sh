@@ -1,10 +1,10 @@
 #!/bin/bash
 
-cd auto_derive  
+cd debug_deriving
 moon fmt && moon info && moon check && moon test
 cd ..
 
-cd auto_derive_example
+cd debug_deriving_examples
 moon fmt && moon info && moon check && moon test
 cd ..
 

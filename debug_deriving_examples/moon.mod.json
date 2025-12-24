@@ -1,5 +1,5 @@
 {
-    "name": "dii_user/example",
+    "name": "username/example",
     "version": "0.1.0",
     "deps": {
         "moonbit-community/debug": {
@@ -7,8 +7,8 @@
         }
     },
     "bin-deps": {
-        "dii_user/auto_derive": {
-            "path": "../auto_derive"
+        "moonbit-community/debug_deriving": {
+            "path": "../debug_deriving"
         }
     },
     "readme": "README.mbt.md",

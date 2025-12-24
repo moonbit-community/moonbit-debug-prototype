@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-exec /Users/yorkin/.moon/bin/moonrun /Users/yorkin/source/moonbit/moonbit-debug-prototype/auto_derive/target/wasm-gc/release/build/auto_derive.wasm -- "$@"
