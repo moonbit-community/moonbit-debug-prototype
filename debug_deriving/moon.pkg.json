@@ -6,6 +6,6 @@
     "moonbitlang/parser/attribute",
     "moonbitlang/x/fs"
   ],
-  "bin-name": "auto_derive",
+  "bin-name": "debug_deriving",
   "bin-target": "wasm-gc"
 }

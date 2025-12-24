@@ -2,10 +2,14 @@
     "name": "username/example",
     "version": "0.1.0",
     "deps": {
-        "moonbit-community/debug": "0.1.1"
+        "moonbit-community/debug": {
+            "path": "../debug"
+        }
     },
     "bin-deps": {
-        "moonbit-community/debug_deriving": "0.1.1"
+        "moonbit-community/debug_deriving": {
+            "path": "../debug_deriving"
+        }
     },
     "readme": "README.mbt.md",
     "repository": "",

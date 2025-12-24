@@ -92,7 +92,7 @@ To automatically generate `Debug` implementations for your types:
 {
   "pre-build": [
     {
-      "command": "$mod_dir/.mooncakes/moonbit-community/debug_deriving $input $output",
+      "command": "$mod_dir/.mooncakes/moonbit-community/debug_deriving/debug_deriving $input $output",
       "input": "input.mbt",
       "output": "output.mbt"
     }

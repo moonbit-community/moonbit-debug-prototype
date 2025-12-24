@@ -1,14 +1,19 @@
 {
     "name": "moonbit-community/debug_deriving",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "deps": {
         "moonbitlang/parser": "0.1.12",
         "moonbitlang/x": "0.4.38"
     },
     "bin-deps": {},
     "readme": "README.mbt.md",
-    "repository": "",
+    "description": "",
+    "repository": "https://github.com/moonbit-community/debug",
     "license": "Apache-2.0",
-    "keywords": [],
-    "description": ""
+    "keywords": [
+        "experimental",
+        "debug",
+        "diff",
+        "pretty-print"
+    ]
 }
