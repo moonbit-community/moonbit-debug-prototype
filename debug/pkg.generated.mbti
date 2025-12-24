@@ -45,6 +45,7 @@ pub impl Debug for String
 pub impl[T : Debug] Debug for T?
 pub impl[T : Debug] Debug for Array[T]
 pub impl[K : Debug, V : Debug] Debug for Map[K, V]
+pub impl Debug for SourceLoc
 pub impl[A : Debug, B : Debug] Debug for (A, B)
 pub impl[A : Debug, B : Debug, C : Debug] Debug for (A, B, C)
 pub impl[A : Debug, B : Debug, C : Debug, D : Debug] Debug for (A, B, C, D)

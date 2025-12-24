@@ -44,6 +44,16 @@ fn process(top : @syntax.Impl, buf : StringBuilder) -> Unit {
 }
 
 ///|
+/// Generate visibility prefix based on TypeDecl visibility
+/// pub(all) or pub types should generate "pub impl", otherwise "impl"
+fn generate_visibility_prefix(decl : @syntax.TypeDecl) -> String {
+  match decl.type_vis {
+    Pub(_) => "pub "
+    Default | Priv(_) => ""
+  }
+}
+
+///|
 /// Generate Debug trait implementation code for a TypeDecl
 fn generate_debug_impl(decl : @syntax.TypeDecl, buf : StringBuilder) -> Unit {
   let type_name = decl.tycon
@@ -55,11 +65,13 @@ fn generate_debug_impl(decl : @syntax.TypeDecl, buf : StringBuilder) -> Unit {
   } else {
     "\{type_name}[\{type_params}]"
   }
+  // Generate visibility prefix based on type visibility
+  let vis_prefix = generate_visibility_prefix(decl)
   // Generate the impl block
   let impl_header = if type_constraints.is_empty() {
-    "impl @debug.Debug for \{full_type} with debug(self)"
+    "\{vis_prefix}impl @debug.Debug for \{full_type} with debug(self)"
   } else {
-    "impl[\{type_constraints}] @debug.Debug for \{full_type} with debug(self)"
+    "\{vis_prefix}impl[\{type_constraints}] @debug.Debug for \{full_type} with debug(self)"
   }
   buf.write_string("///|\n\{impl_header} {\n\{body}\n}\n\n")
 }

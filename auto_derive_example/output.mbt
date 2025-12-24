@@ -9,6 +9,22 @@ impl @debug.Debug for Pos with debug(self) {
 }
 
 ///|
+pub impl @debug.Debug for PubPoint with debug(self) {
+  let fields : Map[String, @repr.Repr] = {}
+  fields["x"] = @debug.debug(self.x)
+  fields["y"] = @debug.debug(self.y)
+  @repr.Repr::record(fields)
+}
+
+///|
+pub impl @debug.Debug for PubAllPoint with debug(self) {
+  let fields : Map[String, @repr.Repr] = {}
+  fields["x"] = @debug.debug(self.x)
+  fields["y"] = @debug.debug(self.y)
+  @repr.Repr::record(fields)
+}
+
+///|
 impl @debug.Debug for Lambda with debug(self) {
   match self {
     Var(x0) => @repr.Repr::ctor("Var", [(None, @debug.debug(x0))])

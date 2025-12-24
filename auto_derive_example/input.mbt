@@ -7,6 +7,22 @@ struct Pos {
 }
 
 ///|
+/// Test pub type - should generate pub impl
+#debug.derive
+pub struct PubPoint {
+  x : Int
+  y : Int
+}
+
+///|
+/// Test pub(all) type - should generate pub impl
+#debug.derive
+pub(all) struct PubAllPoint {
+  x : Int
+  y : Int
+}
+
+///|
 #debug.derive
 enum Lambda {
   Var(String)
@@ -49,7 +65,7 @@ test {
   inspect(
     @debug.pretty_print(KeyNotFound(("key1", loc))),
     content=(
-      #|KeyNotFound(("key1", <SourceLoc: "input.mbt:26:23-26:32@dii_user/example">))
+      #|KeyNotFound(("key1", <SourceLoc: "input.mbt:42:23-42:32@dii_user/example">))
     ),
   )
   inspect(

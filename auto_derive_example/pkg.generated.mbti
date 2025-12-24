@@ -1,0 +1,40 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "dii_user/example"
+
+import(
+  "moonbit-community/debug"
+  "moonbit-community/debug/repr"
+)
+
+// Values
+
+// Errors
+type KeyNotFound
+
+// Types and methods
+type Lambda
+
+type Pair
+
+type Pos
+
+pub(all) struct PubAllPoint {
+  x : Int
+  y : Int
+}
+pub impl @debug.Debug for PubAllPoint
+
+pub struct PubPoint {
+  x : Int
+  y : Int
+}
+pub impl @debug.Debug for PubPoint
+
+type Stack[T]
+pub fn[T] Stack::push(Self[T], T) -> Unit
+pub impl[T : Default] Default for Stack[T]
+
+// Type aliases
+
+// Traits
+
