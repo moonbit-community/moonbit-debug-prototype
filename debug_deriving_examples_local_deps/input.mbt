@@ -65,7 +65,8 @@ test {
   inspect(
     @debug.pretty_print(KeyNotFound(("key1", loc))),
     content=(
-      #|KeyNotFound(("key1", <SourceLoc: "input.mbt:42:23-42:32@dii_user/example">))
+      #|KeyNotFound(("key1", <SourceLoc: "input.mbt:42:23-42:32@username/example">))
+
     ),
   )
   inspect(
