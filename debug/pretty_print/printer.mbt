@@ -1,58 +1,56 @@
 ///|
 /// Rendered content with line layout and paren preference.
-pub struct Content {
+///
+/// This is an internal implementation detail of `pretty_print`.
+/// Users should rely on `pretty_print_repr` / `pretty_print_delta`.
+priv struct Content {
   size : Int
   lines : Array[String]
   needs_parens : Bool
-} derive(Show, Eq)
-
-///|
+}
 
 ///|
 /// Rendered content without paren preference metadata.
-pub struct ContentParens {
+///
+/// This is an internal implementation detail of `pretty_print`.
+priv struct ContentParens {
   size : Int
   lines : Array[String]
-} derive(Show, Eq)
+}
 
 ///|
-pub impl Add for ContentParens with add(self, other) {
+
+///|
+impl Add for ContentParens with add(self, other) {
   { size: self.size + other.size, lines: self.lines + other.lines }
 }
 
 ///|
 /// Empty content value.
-pub fn empty_content() -> Content {
+fn empty_content() -> Content {
   { size: 0, lines: [], needs_parens: false }
 }
 
 ///|
 /// Single literal token as a `ContentParens`.
-pub fn verbatim(x : String) -> ContentParens {
+fn verbatim(x : String) -> ContentParens {
   { size: 1, lines: [x] }
 }
 
 ///|
 /// Build a `ContentParens` from explicit size and lines.
-pub fn content_parens(size : Int, lines : Array[String]) -> ContentParens {
+fn content_parens(size : Int, lines : Array[String]) -> ContentParens {
   { size, lines }
 }
 
 ///|
 /// Render any `Show` value as a leaf content node.
-pub fn[T : Show] leaf(x : T, needs_parens? : Bool = false) -> Content {
+fn[T : Show] leaf(x : T, needs_parens? : Bool = false) -> Content {
   { size: 1, lines: [repr(x)], needs_parens }
 }
 
 ///|
 /// Render any `Show` value as a leaf with a type suffix.
-pub fn[T : Show] leaf_with_suffix(
-  x : T,
-  suffix : String,
-  needs_parens? : Bool = false,
-) -> Content {
-  { size: 1, lines: [repr(x) + suffix], needs_parens }
-}
 
 ///|
 /// Map a transformation over the lines of `ContentParens`.
@@ -93,7 +91,7 @@ fn surround_lines(
 
 ///|
 /// Surround content with a prefix/suffix, preserving layout.
-pub fn surround(
+fn surround(
   start : String,
   finish : String,
   r : ContentParens,
@@ -103,19 +101,19 @@ pub fn surround(
 
 ///|
 /// Convert `Content` to `ContentParens` without adding parentheses.
-pub fn Content::no_wrap(c : Content) -> ContentParens {
+fn Content::no_wrap(c : Content) -> ContentParens {
   { size: c.size, lines: c.lines }
 }
 
 ///|
 /// Mark a content chunk as needing parentheses when embedded.
-pub fn parens(r : ContentParens) -> Content {
+fn parens(r : ContentParens) -> Content {
   { size: r.size, lines: r.lines, needs_parens: true }
 }
 
 ///|
 /// Mark a content chunk as not needing parentheses when embedded.
-pub fn no_parens(r : ContentParens) -> Content {
+fn no_parens(r : ContentParens) -> Content {
   { size: r.size, lines: r.lines, needs_parens: false }
 }
 
@@ -142,13 +140,13 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
 
 ///|
 /// Compact a `Content` value.
-pub fn Content::compact(r : Content) -> Content {
+fn Content::compact(r : Content) -> Content {
   r.with_lines_content(compact_lines)
 }
 
 ///|
 /// Indent every line by a fixed prefix.
-pub fn indent(prefix : String, r : ContentParens) -> ContentParens {
+fn indent(prefix : String, r : ContentParens) -> ContentParens {
   with_lines(r, fn(lines) { lines.map(fn(line) { prefix + line }) })
 }
 
@@ -184,7 +182,7 @@ fn comma_seq_lines(
 
 ///|
 /// Build a comma-separated sequence as `Content`.
-pub fn comma_seq(
+fn comma_seq(
   begin : String,
   end : String,
   contents : Array[ContentParens],
@@ -202,13 +200,13 @@ pub fn comma_seq(
 
 ///|
 /// Convert content into a final `String` with newline separators.
-pub fn print_content(r : ContentParens) -> String {
+fn print_content(r : ContentParens) -> String {
   r.lines.join("\n"[:])
 }
 
 ///|
 /// Total “size” of a node (root + children), used for compact decisions.
-pub fn measure(root_size : Int, children : Array[Content]) -> Int {
+fn measure(root_size : Int, children : Array[Content]) -> Int {
   let mut total = root_size
   for c in children {
     total += c.size
@@ -218,7 +216,7 @@ pub fn measure(root_size : Int, children : Array[Content]) -> Int {
 
 ///|
 /// Render compactly when the measured size stays under `threshold`.
-pub fn with_resizing(
+fn with_resizing(
   root_size : Int,
   threshold : Int,
   f : (Array[Content]) -> Content,

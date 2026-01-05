@@ -7,10 +7,6 @@
     {
       "path": "moonbit-community/debug/diff",
       "alias": "diff"
-    },
-    {
-      "path": "moonbit-community/debug/pretty_printer",
-      "alias": "printer"
     }
   ]
 }
