@@ -24,7 +24,9 @@ test "pretty_print: empty record key is quoted" {
   let r = @repr.Repr::record({ "": @repr.Repr::int(0) })
   inspect(
     pretty_print_repr(r, compact_threshold=100, use_ansi=false),
-    content="{ \"\": 0 }",
+    content=(
+      #|{ "": 0 }
+    ),
   )
 }
 
@@ -33,7 +35,9 @@ test "pretty_print: long string affects layout sizing" {
   let r = @repr.Repr::array([@repr.Repr::string("0123456789abcdef")])
   inspect(
     pretty_print_repr(r, compact_threshold=2, use_ansi=false),
-    content="[ \"0123456789abcdef\" ]",
+    content=(
+      #|["0123456789abcdef"]
+    ),
   )
 }
 
@@ -52,6 +56,6 @@ test "pretty_print: prune_delta replaces deep differences with omitted" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="[ ... ]",
+    content="[...]",
   )
 }

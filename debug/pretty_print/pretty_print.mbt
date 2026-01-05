@@ -193,8 +193,8 @@ fn pretty_print_repr_go(
             comma_seq(name + "(", ")", children.map(x => x.no_wrap()))
           }
       }
-    Array(_) => comma_seq("[ ", " ]", children.map(x => x.no_wrap()))
-    Record(_) => comma_seq("{ ", " }", children.map(x => x.no_wrap()))
+    Array(_) => comma_seq("[", "]", children.map(x => x.no_wrap()))
+    Record(_) => comma_seq("{", "}", children.map(x => x.no_wrap()))
     Opaque(name, _) =>
       if children.is_empty() {
         no_parens(surround("<", ">", verbatim(name)))
@@ -207,11 +207,30 @@ fn pretty_print_repr_go(
         no_parens(surround("<", ">", body))
       }
     Literal(str) => no_parens(verbatim(str))
-    Map(_) => comma_seq("{ ", " }", children.map(x => x.no_wrap()))
+    Map(_) => comma_seq("{", "}", children.map(x => x.no_wrap()))
     MapEntry(_, _) =>
       match children {
-        [key, val] =>
-          no_parens(surround("", ":", key.no_wrap()) + val.no_wrap())
+        [key, val] => {
+          let k = key.no_wrap()
+          let v = val.no_wrap()
+          match v.lines {
+            [] => empty_content()
+            [one] =>
+              no_parens(
+                content_parens(1 + k.size + v.size, [
+                  print_content(surround("", ": ", k)) + one,
+                ]),
+              )
+            [first, ..] => {
+              let n = v.lines.length()
+              let rest = if n <= 1 { [] } else { v.lines[1:n].to_array() }
+              // put the key and the first line of value on the same line
+              // then keep the remaining lines of the value as-is.
+              let head = print_content(surround("", ": ", k)) + first
+              no_parens(content_parens(1 + k.size + v.size, [head] + rest))
+            }
+          }
+        }
         _ => empty_content()
       }
     EnumLabeledArg(name, _) =>
@@ -233,11 +252,21 @@ fn pretty_print_repr_go(
       }
     RecordField(name, _) =>
       match children {
-        [val] =>
-          no_parens(
-            verbatim(pretty_print_label(name) + ":") +
-            indent("  ", val.no_wrap()),
-          )
+        [val] => {
+          let label = pretty_print_label(name)
+          let v = val.no_wrap()
+          match v.lines {
+            [] => empty_content()
+            [one] => no_parens(content_parens(1 + v.size, [label + ": " + one]))
+            [first, ..] => {
+              let n = v.lines.length()
+              let rest = if n <= 1 { [] } else { v.lines[1:n].to_array() }
+              no_parens(
+                content_parens(1 + v.size, [label + ": " + first] + rest),
+              )
+            }
+          }
+        }
         _ => empty_content()
       }
     Omitted => parens(verbatim("..."))

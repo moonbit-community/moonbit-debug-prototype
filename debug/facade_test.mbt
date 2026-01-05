@@ -38,7 +38,7 @@ test "facade: Repr constructors pretty-print as expected" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="[ 1, 2 ]",
+    content="[1, 2]",
   )
   inspect(
     pretty_print_repr(
@@ -97,7 +97,7 @@ test "facade: Repr constructors pretty-print as expected" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="<Vec: [ 1, 2 ]>",
+    content="<Vec: [1, 2]>",
   )
   inspect(
     pretty_print_repr(
@@ -105,7 +105,9 @@ test "facade: Repr constructors pretty-print as expected" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="{ \"a\": 1 }",
+    content=(
+      #|{ "a": 1 }
+    ),
   )
 }
 

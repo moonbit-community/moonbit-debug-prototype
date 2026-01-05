@@ -119,6 +119,22 @@ fn no_parens(r : ContentParens) -> Content {
 
 ///|
 /// Compact multi-line output into a single line when possible.
+///
+/// Note: we special-case common layouts (brackets/braces/paren-calls)
+/// so that a multi-line output like:
+///
+/// ```text
+/// [
+///   a,
+///   b,
+/// ]
+/// ```
+///
+/// compacts into:
+///
+/// ```text
+/// [a, b]
+/// ```
 #warnings("-deprecated")
 fn compact_lines(lines : Array[String]) -> Array[String] {
   match lines {
@@ -126,14 +142,101 @@ fn compact_lines(lines : Array[String]) -> Array[String] {
     [x] => [x]
     [first, ..] => {
       let n = lines.length()
-      let middle : ArrayView[String] = if n <= 2 { [] } else { lines[1:n - 1] }
       let last = lines[n - 1]
-      let parts : Array[StringView] = [first]
-      for m in middle {
-        parts.push(m.trim_space())
+
+      // Special-case bracket/brace blocks: "[ ... ]" and "{ ... }"
+      // produced by `bracket_seq_lines`.
+      if (first == "[" && last == "]") || (first == "{" && last == "}") {
+        let middle : ArrayView[String] = if n <= 2 {
+          []
+        } else {
+          lines[1:n - 1]
+        }
+        let parts : Array[String] = []
+        for m in middle {
+          let t = m.trim_space().to_string()
+          if t != "" {
+            parts.push(t)
+          }
+        }
+        let joined0 = parts.join(" "[:])
+        let joined = match joined0.strip_suffix(","[:]) {
+          Some(sv) => sv.to_string()
+          None => joined0
+        }
+
+        // Match expected style:
+        // - arrays: [a, b]
+        // - records/maps: { field: value, field: value }
+        if first == "{" {
+          let inner0 = joined
+          let inner1 = match inner0.strip_prefix(" "[:]) {
+            Some(sv) => sv.to_string()
+            None => inner0
+          }
+          let inner = match inner1.strip_suffix(" "[:]) {
+            Some(sv) => sv.to_string()
+            None => inner1
+          }
+          if inner == "" {
+            ["{}"]
+          } else {
+            ["{ " + inner + " }"]
+          }
+        } else {
+          ["[" + joined + "]"]
+        }
+      } else {
+        // Special-case parenthesized call-like blocks produced by `comma_seq_lines`:
+        //
+        // ```text
+        // Enum(
+        //   a,
+        //   b,
+        // )
+        // ```
+        //
+        // compacts into:
+        //
+        // ```text
+        // Enum(a, b)
+        // ```
+        match (first.strip_suffix("("[:]), last) {
+          (Some(_), ")") => {
+            let middle : ArrayView[String] = if n <= 2 {
+              []
+            } else {
+              lines[1:n - 1]
+            }
+            let parts : Array[String] = []
+            for m in middle {
+              let t = m.trim_space().to_string()
+              if t != "" {
+                parts.push(t)
+              }
+            }
+            let joined0 = parts.join(" "[:])
+            let joined = match joined0.strip_suffix(","[:]) {
+              Some(sv) => sv.to_string()
+              None => joined0
+            }
+            [first + joined + last]
+          }
+          _ => {
+            let middle : ArrayView[String] = if n <= 2 {
+              []
+            } else {
+              lines[1:n - 1]
+            }
+            let parts : Array[StringView] = [first]
+            for m in middle {
+              parts.push(m.trim_space())
+            }
+            parts.push(last.trim_space())
+            [parts.join(" "[:])]
+          }
+        }
       }
-      parts.push(last.trim_space())
-      [parts.join(" "[:])]
     }
   }
 }
@@ -151,33 +254,191 @@ fn indent(prefix : String, r : ContentParens) -> ContentParens {
 }
 
 ///|
+/// Indent every line by a fixed number of spaces.
+fn indent_spaces(n : Int, r : ContentParens) -> ContentParens {
+  indent(" ".repeat(n), r)
+}
+
+///|
+/// Render a bracket/brace sequence.
+///
+/// Multi-line layout is:
+///
+/// ```text
+/// [
+///   a,
+///   b,
+/// ]
+/// ```
+///
+/// Compact layout (handled by `compact_lines`) is:
+///
+/// ```text
+/// [a, b]
+/// ```
+fn bracket_seq_lines(
+  open : String,
+  close : String,
+  indent_by : Int,
+  contents : Array[Array[String]],
+) -> Array[String] {
+  match contents {
+    [] => [open + close]
+    [item] =>
+      // If the item itself is multi-line, keep the surrounding brackets/braces
+      // multi-line too (important for nested structures when compact_threshold=0).
+      // Also ensure the single element still gets a trailing comma in multi-line mode.
+      if item.length() > 1 {
+        let lines = indent_spaces(indent_by, { size: 0, lines: item }).lines
+        if lines.length() > 0 {
+          let last_i = lines.length() - 1
+          lines[last_i] = lines[last_i] + ","
+        }
+        [open] + lines + [close]
+      } else {
+        // single-line item stays on one line
+        let inner = compact_lines(item)
+        match inner {
+          [] => [open + close]
+          [x] =>
+            if open == "{" && close == "}" {
+              let inner = x.trim().to_string()
+              if inner == "" {
+                ["{}"]
+              } else {
+                ["{ " + inner + " }"]
+              }
+            } else {
+              [open + x + close]
+            }
+          _ =>
+            [open] +
+            indent_spaces(indent_by, { size: 0, lines: item }).lines +
+            [close]
+        }
+      }
+    _ => {
+      // Multi-line always uses trailing comma style to match expectation.
+      let out : Array[String] = [open]
+      for i = 0; i < contents.length(); i = i + 1 {
+        let item = contents[i]
+        let item_lines = item.filter(fn(line) { line != "" })
+        match item_lines {
+          [] => ()
+          [x] => out.push(" ".repeat(indent_by) + x + ",")
+          [first, ..] => {
+            let n = item_lines.length()
+            out.push(" ".repeat(indent_by) + first)
+            if n > 2 {
+              for mid in item_lines[1:n - 1] {
+                out.push(" ".repeat(indent_by) + mid)
+              }
+            }
+            out.push(" ".repeat(indent_by) + item_lines[n - 1] + ",")
+          }
+        }
+      }
+      out.push(close)
+      out
+    }
+  }
+}
+
+///|
 /// Join content chunks with commas and consistent indentation.
+///
+/// This is used for function call arguments etc.
 fn comma_seq_lines(
   begin : String,
   end : String,
   contents : Array[Array[String]],
 ) -> Array[String] {
-  fn spacer(begin : String) -> String {
-    " ".repeat(begin.length())
-  }
+  // Special-case common bracket/brace forms to get nicer pretty-print output.
+  if begin == "[" && end == "]" {
+    bracket_seq_lines("[", "]", 2, contents)
+  } else if begin == "{" && end == "}" {
+    bracket_seq_lines("{", "}", 2, contents)
+  } else if begin == "" && end == "" {
+    // Used by some internal layouts (e.g. opaque wrappers).
+    // Keep the legacy behavior to avoid introducing an empty leading/trailing line.
+    fn spacer(begin : String) -> String {
+      " ".repeat(begin.length())
+    }
 
-  let lines = match contents {
-    [] => [begin + end]
-    [item] => surround_lines(begin, end, item)
-    [first, ..] => {
-      let n = contents.length()
-      let middle = if n <= 2 { [] } else { contents[1:n - 1].to_array() }
-      let last = contents[n - 1]
-      let space = spacer(begin)
-      let middle_lines = middle.fold(init=[], fn(acc, item) {
-        acc + surround_lines(space, ",", item)
-      })
-      surround_lines(begin, ",", first) +
-      middle_lines +
-      surround_lines(space, end, last)
+    let lines = match contents {
+      [] => [begin + end]
+      [item] => surround_lines(begin, end, item)
+      [first, ..] => {
+        let n = contents.length()
+        let middle = if n <= 2 { [] } else { contents[1:n - 1].to_array() }
+        let last = contents[n - 1]
+        let space = spacer(begin)
+        let middle_lines = middle.fold(init=[], fn(acc, item) {
+          acc + surround_lines(space, ",", item)
+        })
+        surround_lines(begin, ",", first) +
+        middle_lines +
+        surround_lines(space, end, last)
+      }
+    }
+    lines.filter(fn(line) { line != "" })
+  } else {
+    // Multi-line layout with trailing comma style:
+    //
+    // ```text
+    // Enum(
+    //   a,
+    //   b,
+    // )
+    // ```
+    let indent_by = 2
+    match contents {
+      [] => [begin + end]
+      [item] => {
+        let item_lines = item.filter(fn(line) { line != "" })
+        match item_lines {
+          [] => [begin + end]
+          [x] => [begin + x + end]
+          _ => {
+            let out : Array[String] = [begin]
+            for i = 0; i < item_lines.length(); i = i + 1 {
+              let line = item_lines[i]
+              if i == item_lines.length() - 1 {
+                out.push(" ".repeat(indent_by) + line + ",")
+              } else {
+                out.push(" ".repeat(indent_by) + line)
+              }
+            }
+            out.push(end)
+            out
+          }
+        }
+      }
+      _ => {
+        let out : Array[String] = [begin]
+        for i = 0; i < contents.length(); i = i + 1 {
+          let item = contents[i]
+          let item_lines = item.filter(fn(line) { line != "" })
+          match item_lines {
+            [] => ()
+            [x] => out.push(" ".repeat(indent_by) + x + ",")
+            [first, ..] => {
+              let n = item_lines.length()
+              out.push(" ".repeat(indent_by) + first)
+              if n > 2 {
+                for mid in item_lines[1:n - 1] {
+                  out.push(" ".repeat(indent_by) + mid)
+                }
+              }
+              out.push(" ".repeat(indent_by) + item_lines[n - 1] + ",")
+            }
+          }
+        }
+        out.push(end)
+        out
+      }
     }
   }
-  lines.filter(fn(line) { line != "" })
 }
 
 ///|
@@ -222,7 +483,11 @@ fn with_resizing(
   f : (Array[Content]) -> Content,
   children : Array[Content],
 ) -> Content {
-  if measure(root_size, children) <= threshold {
+  // `compact_threshold=0` is used by tests/users to force multi-line output.
+  // In that mode we should never run the compaction pass.
+  if threshold <= 0 {
+    f(children)
+  } else if measure(root_size, children) <= threshold {
     f(children).compact()
   } else {
     f(children)

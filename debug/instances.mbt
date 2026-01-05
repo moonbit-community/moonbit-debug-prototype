@@ -948,18 +948,20 @@ test "tuple Debug implementations" {
   inspect(
     pretty_print((1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l")),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l")
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|)
     ),
   )
 
@@ -967,19 +969,21 @@ test "tuple Debug implementations" {
   inspect(
     pretty_print((1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13)),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13)
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|)
     ),
   )
 
@@ -989,20 +993,22 @@ test "tuple Debug implementations" {
       (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n"),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n")
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|)
     ),
   )
 
@@ -1012,21 +1018,23 @@ test "tuple Debug implementations" {
       (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15)
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|)
     ),
   )
 
@@ -1036,22 +1044,24 @@ test "tuple Debug implementations" {
       (1, "a", true, 2.0, 'c', 6, "g", false, 9, "j", 11, "l", 13, "n", 15, "p"),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p")
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|)
     ),
   )
 
@@ -1064,23 +1074,25 @@ test "tuple Debug implementations" {
       ),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p",
-      #| 17)
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|  17,
+      #|)
     ),
   )
 
@@ -1093,24 +1105,26 @@ test "tuple Debug implementations" {
       ),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p",
-      #| 17,
-      #| "r")
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|  17,
+      #|  "r",
+      #|)
     ),
   )
 
@@ -1123,25 +1137,27 @@ test "tuple Debug implementations" {
       ),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p",
-      #| 17,
-      #| "r",
-      #| 19)
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|  17,
+      #|  "r",
+      #|  19,
+      #|)
     ),
   )
 
@@ -1154,26 +1170,28 @@ test "tuple Debug implementations" {
       ),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p",
-      #| 17,
-      #| "r",
-      #| 19,
-      #| "t")
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|  17,
+      #|  "r",
+      #|  19,
+      #|  "t",
+      #|)
     ),
   )
 
@@ -1186,27 +1204,29 @@ test "tuple Debug implementations" {
       ),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p",
-      #| 17,
-      #| "r",
-      #| 19,
-      #| "t",
-      #| 21)
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|  17,
+      #|  "r",
+      #|  19,
+      #|  "t",
+      #|  21,
+      #|)
     ),
   )
 
@@ -1219,28 +1239,30 @@ test "tuple Debug implementations" {
       ),
     ),
     content=(
-      #|(1,
-      #| "a",
-      #| true,
-      #| 2,
-      #| 'c',
-      #| 6,
-      #| "g",
-      #| false,
-      #| 9,
-      #| "j",
-      #| 11,
-      #| "l",
-      #| 13,
-      #| "n",
-      #| 15,
-      #| "p",
-      #| 17,
-      #| "r",
-      #| 19,
-      #| "t",
-      #| 21,
-      #| "v")
+      #|(
+      #|  1,
+      #|  "a",
+      #|  true,
+      #|  2,
+      #|  'c',
+      #|  6,
+      #|  "g",
+      #|  false,
+      #|  9,
+      #|  "j",
+      #|  11,
+      #|  "l",
+      #|  13,
+      #|  "n",
+      #|  15,
+      #|  "p",
+      #|  17,
+      #|  "r",
+      #|  19,
+      #|  "t",
+      #|  21,
+      #|  "v",
+      #|)
     ),
   )
 }
@@ -1254,12 +1276,12 @@ test "core data structures Debug implementations" {
   let b : Bytes = b"ab"
   inspect(
     pretty_print(b, compact_threshold=100, use_ansi=false),
-    content="<Bytes: [ 0x61, 0x62 ]>",
+    content="<Bytes: [0x61, 0x62]>",
   )
   let bv : BytesView = b[:]
   inspect(
     pretty_print(bv, compact_threshold=100, use_ansi=false),
-    content="<BytesView: [ 0x61, 0x62 ]>",
+    content="<BytesView: [0x61, 0x62]>",
   )
   let sv : StringView = "abc"[:]
   inspect(
@@ -1269,22 +1291,22 @@ test "core data structures Debug implementations" {
   let av : ArrayView[Int] = [1, 2, 3][1:3]
   inspect(
     pretty_print(av, compact_threshold=100, use_ansi=false),
-    content="<ArrayView: [ 2, 3 ]>",
+    content="<ArrayView: [2, 3]>",
   )
   let fa : FixedArray[Int] = [1, 2, 3]
   inspect(
     pretty_print(fa, compact_threshold=100, use_ansi=false),
-    content="<FixedArray: [ 1, 2, 3 ]>",
+    content="<FixedArray: [1, 2, 3]>",
   )
   let ro : ReadOnlyArray[Int] = [1, 2, 3]
   inspect(
     pretty_print(ro, compact_threshold=100, use_ansi=false),
-    content="<ReadOnlyArray: [ 1, 2, 3 ]>",
+    content="<ReadOnlyArray: [1, 2, 3]>",
   )
   let lst : @list.List[Int] = @list.from_array([1, 2, 3])
   inspect(
     pretty_print(lst, compact_threshold=100, use_ansi=false),
-    content="<List: [ 1, 2, 3 ]>",
+    content="<List: [1, 2, 3]>",
   )
   let hm : @hashmap.HashMap[Int, String] = @hashmap.from_array([
     (2, "b"),
@@ -1292,35 +1314,37 @@ test "core data structures Debug implementations" {
   ])
   inspect(
     pretty_print(hm, compact_threshold=100, use_ansi=false),
-    content="<HashMap: { 1: \"a\", 2: \"b\" }>",
+    content=(
+      #|<HashMap: { 1: "a", 2: "b" }>
+    ),
   )
   let hs : @hashset.HashSet[Int] = @hashset.from_array([3, 1, 2])
   inspect(
     pretty_print(hs, compact_threshold=100, use_ansi=false),
-    content="<HashSet: [ 1, 2, 3 ]>",
+    content="<HashSet: [1, 2, 3]>",
   )
   let dq : @deque.Deque[Int] = @deque.from_array([1, 2, 3])
   inspect(
     pretty_print(dq, compact_threshold=100, use_ansi=false),
-    content="<Deque: [ 1, 2, 3 ]>",
+    content="<Deque: [1, 2, 3]>",
   )
   let q : @queue.Queue[Int] = @queue.from_array([1, 2, 3])
   inspect(
     pretty_print(q, compact_threshold=100, use_ansi=false),
-    content="<Queue: [ 1, 2, 3 ]>",
+    content="<Queue: [1, 2, 3]>",
   )
   let pq : @priority_queue.PriorityQueue[Int] = @priority_queue.from_array([
     3, 1, 2,
   ])
   inspect(
     pretty_print(pq, compact_threshold=100, use_ansi=false),
-    content="<PriorityQueue: [ 1, 2, 3 ]>",
+    content="<PriorityQueue: [1, 2, 3]>",
   )
   let buf = @buffer.new()
   buf.write_bytes(b"ab")
   inspect(
     pretty_print(buf, compact_threshold=100, use_ansi=false),
-    content="<Buffer: <Bytes: [ 0x61, 0x62 ]>>",
+    content="<Buffer: <Bytes: [0x61, 0x62]>>",
   )
   let r : Ref[Int] = @ref.new(1)
   inspect(
@@ -1330,7 +1354,7 @@ test "core data structures Debug implementations" {
   let mv : MutArrayView[Int] = [1, 2, 3].mut_view(start=1, end=3)
   inspect(
     pretty_print(mv, compact_threshold=100, use_ansi=false),
-    content="<MutArrayView: [ 2, 3 ]>",
+    content="<MutArrayView: [2, 3]>",
   )
   inspect(pretty_print((Ok(1) : Result[Int, String])), content="Ok(1)")
   inspect(pretty_print((Err("e") : Result[Int, String])), content="Err(\"e\")")

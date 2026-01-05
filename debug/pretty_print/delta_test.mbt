@@ -8,7 +8,7 @@ test "diff printing: arrays collapse when all children differ" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="-[ 1, 2 ] +[ 3, 4 ]",
+    content="-[1, 2] +[3, 4]",
   )
 }
 
@@ -22,7 +22,7 @@ test "diff printing: arrays show per-element when some children same" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="[ 1, -2 +3 ]",
+    content="[1, -2 +3]",
   )
 }
 
@@ -69,7 +69,9 @@ test "dict entry prints `k: v`" {
       compact_threshold=100,
       use_ansi=false,
     ),
-    content="{ \"a\": -1 +2 }",
+    content=(
+      #|{ "a": -1 +2 }
+    ),
   )
 }
 

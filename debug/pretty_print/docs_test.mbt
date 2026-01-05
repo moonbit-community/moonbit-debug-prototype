@@ -32,7 +32,9 @@ test "docs: custom type pretty_print" {
   let r = example_repr(sample)
   inspect(
     pretty_print_repr(r, compact_threshold=100, use_ansi=false),
-    content="{ answer: 42, xs: [ 1, 2, 3 ], tag: Ok(\"done\") }",
+    content=(
+      #|{ answer: 42, xs: [1, 2, 3], tag: Ok("done") }
+    ),
   )
 }
 
@@ -65,7 +67,9 @@ test "docs: record keys are quoted when needed" {
   let r = weird_keys_repr(sample)
   inspect(
     pretty_print_repr(r, compact_threshold=100, use_ansi=false),
-    content="{ snake_case_ok: 1, \"with space\": 2, \"k-v\": 3, \"CamelCase\": 4 }",
+    content=(
+      #|{ snake_case_ok: 1, "with space": 2, "k-v": 3, "CamelCase": 4 }
+    ),
   )
 }
 
@@ -85,13 +89,81 @@ test "docs: compact_threshold controls single-line vs multi-line" {
   let r = numbers_repr(sample)
   let compact = pretty_print_repr(r)
   let expanded = pretty_print_repr(r, compact_threshold=0, use_ansi=false)
-  inspect(compact, content="[ 1, 2, 3 ]")
+  inspect(compact, content="[1, 2, 3]")
   inspect(
     expanded,
     content=(
-      #|[ 1,
+      #|[
+      #|  1,
       #|  2,
-      #|  3 ]
+      #|  3,
+      #|]
+    ),
+  )
+}
+
+///|
+test "docs: nested arrays expand with trailing commas" {
+  let r = @repr.Repr::array([
+    @repr.Repr::array([@repr.Repr::int(1), @repr.Repr::int(2)]),
+    @repr.Repr::array([@repr.Repr::int(3)]),
+  ])
+  inspect(
+    pretty_print_repr(r, compact_threshold=0, use_ansi=false),
+    content=(
+      #|[
+      #|  [
+      #|    1,
+      #|    2,
+      #|  ],
+      #|  [3],
+      #|]
+    ),
+  )
+}
+
+///|
+test "docs: record containing arrays expands" {
+  let r = @repr.Repr::record({
+    "xs": @repr.Repr::array([
+      @repr.Repr::int(1),
+      @repr.Repr::int(2),
+      @repr.Repr::int(3),
+    ]),
+    "ys": @repr.Repr::array([]),
+  })
+  inspect(
+    pretty_print_repr(r, compact_threshold=0, use_ansi=false),
+    content=(
+      #|{
+      #|  xs: [
+      #|    1,
+      #|    2,
+      #|    3,
+      #|  ],
+      #|  ys: [],
+      #|}
+    ),
+  )
+}
+
+///|
+test "docs: nested record expands" {
+  let r = @repr.Repr::record({
+    "outer": @repr.Repr::record({
+      "a": @repr.Repr::int(1),
+      "b": @repr.Repr::record({ "c": @repr.Repr::int(2) }),
+    }),
+  })
+  inspect(
+    pretty_print_repr(r, compact_threshold=0, use_ansi=false),
+    content=(
+      #|{
+      #|  outer: {
+      #|    a: 1,
+      #|    b: { c: 2 },
+      #|  },
+      #|}
     ),
   )
 }
@@ -126,6 +198,52 @@ test "docs: labeled enum arguments are printed" {
 }
 
 ///|
+test "docs: enums expand with trailing commas" {
+  let r = @repr.Repr::ctor("Enum", [
+    (None, @repr.Repr::literal("a")),
+    (None, @repr.Repr::literal("b")),
+    (None, @repr.Repr::literal("c")),
+  ])
+  inspect(
+    pretty_print_repr(r, compact_threshold=0, use_ansi=false),
+    content=(
+      #|Enum(
+      #|  a,
+      #|  b,
+      #|  c,
+      #|)
+    ),
+  )
+}
+
+///|
+test "docs: nested enums + arrays expand consistently" {
+  let r = @repr.Repr::ctor("Outer", [
+    (
+      None,
+      @repr.Repr::ctor("Inner", [
+        (None, @repr.Repr::array([@repr.Repr::int(1), @repr.Repr::int(2)])),
+        (None, @repr.Repr::record({ "k": @repr.Repr::int(3) })),
+      ]),
+    ),
+  ])
+  inspect(
+    pretty_print_repr(r, compact_threshold=0, use_ansi=false),
+    content=(
+      #|Outer(
+      #|  Inner(
+      #|    [
+      #|      1,
+      #|      2,
+      #|    ],
+      #|    { k: 3 },
+      #|  ),
+      #|)
+    ),
+  )
+}
+
+///|
 struct DictExample {
   entries : Array[(String, Int)]
 }
@@ -146,7 +264,24 @@ test "docs: dict prints as k: v pairs" {
   let r = dict_repr(sample)
   inspect(
     pretty_print_repr(r, compact_threshold=100, use_ansi=false),
-    content="{ \"a\": 1, \"b\": 2 }",
+    content=(
+      #|{ "a": 1, "b": 2 }
+    ),
+  )
+}
+
+///|
+test "docs: dict expands with quoted keys + trailing commas" {
+  let sample : DictExample = { entries: [("a", 1), ("b", 2)] }
+  let r = dict_repr(sample)
+  inspect(
+    pretty_print_repr(r, compact_threshold=0, use_ansi=false),
+    content=(
+      #|{
+      #|  "a": 1,
+      #|  "b": 2,
+      #|}
+    ),
   )
 }
 
@@ -169,7 +304,7 @@ test "docs: opaque wrappers show tag and children" {
   let r = opaque_repr(sample)
   inspect(
     pretty_print_repr(r, compact_threshold=100, use_ansi=false),
-    content="<Vec: [ 1, 2 ]>",
+    content="<Vec: [1, 2]>",
   )
 }
 

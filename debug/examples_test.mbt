@@ -32,7 +32,12 @@ pub impl Debug for Expr with debug(self) {
 ///|
 test "custom struct pretty_print" {
   let p : Person = { name: "Alice", age: 42 }
-  inspect(pretty_print(p), content="{ name: \"Alice\", age: 42 }")
+  inspect(
+    pretty_print(p),
+    content=(
+      #|{ name: "Alice", age: 42 }
+    ),
+  )
 }
 
 ///|
