@@ -176,21 +176,9 @@ pub impl[A] Debug for Iter[A] with debug(_) {
 }
 
 ///|
-pub impl[A] Debug for Iterator[A] with debug(_) {
-  // Avoid consuming the iterator (and avoid potentially infinite iterations).
-  Repr::opaque_("Iterator", [])
-}
-
-///|
 pub impl[A, B] Debug for Iter2[A, B] with debug(_) {
   // Avoid consuming the iterator (and avoid potentially infinite iterations).
   Repr::opaque_("Iter2", [])
-}
-
-///|
-pub impl[A, B] Debug for Iterator2[A, B] with debug(_) {
-  // Avoid consuming the iterator (and avoid potentially infinite iterations).
-  Repr::opaque_("Iterator2", [])
 }
 
 ///|
